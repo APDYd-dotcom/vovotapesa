@@ -36,7 +36,10 @@ fun MyNavigation(navHostController: NavHostController){
     startDestination = Rooter.Login().name
   ){
     composable(route = Rooter.Login().name) {
-      LoginScreen()
+      LoginScreen(
+        onLoginClick ={navHostController.navigate(Rooter.Home().name)},
+        onSignupClick = {navHostController.navigate(Rooter.SignUp().name)}
+      )
     }
     composable(route = Rooter.SignUp().name) {
       SignUpScreen()

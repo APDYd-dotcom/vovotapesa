@@ -11,8 +11,8 @@ object FontSizes {
   fun title(): TextUnit {
     val width = LocalConfiguration.current.screenWidthDp
     return when {
-      width < 360 -> 18.sp
-      width < 600 -> 20.sp
+      width < 360 -> 30.sp
+      width < 600 -> 32.sp
       else -> 24.sp
     }
   }
@@ -31,8 +31,8 @@ object FontSizes {
   fun caption(): TextUnit {
     val width = LocalConfiguration.current.screenWidthDp
     return when {
-      width < 360 -> 10.sp
-      width < 600 -> 12.sp
+      width < 360 -> 12.sp
+      width < 600 -> 13.5.sp
       else -> 14.sp
     }
   }
