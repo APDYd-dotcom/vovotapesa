@@ -85,6 +85,4 @@ dependencies {
   //splash theme
   implementation(libs.androidx.core.splashscreen)
 
-  implementation("androidx.compose.runtime:runtime-livedata:1.5.0")
-  implementation("com.google.accompanist:accompanist-permissions:0.32.0")
 }
