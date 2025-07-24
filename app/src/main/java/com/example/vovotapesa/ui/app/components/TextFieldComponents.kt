@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import com.example.vovotapesa.R
 
 /*A Simple OutlinedTextField*/
@@ -43,7 +44,7 @@ fun MyTextFieldComponent(
     },
     keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
     visualTransformation = visualTransformation,
-    shape = RoundedCornerShape(percent = 30),
+    shape = RoundedCornerShape(10.dp),
     singleLine = true,
     enabled = enabled
   )
@@ -87,7 +88,7 @@ fun MyPasswordTextField(
     enabled = enabled,
     keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-    shape = RoundedCornerShape(percent = 30),
+    shape = RoundedCornerShape(10.dp),
     singleLine = true
   )
 }
