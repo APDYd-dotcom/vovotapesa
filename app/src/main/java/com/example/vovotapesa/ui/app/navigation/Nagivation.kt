@@ -1,5 +1,6 @@
 package com.example.vovotapesa.ui.app.navigation
 
+import SignUpScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,7 +13,7 @@ import com.example.vovotapesa.ui.app.pages.WithdrawPage
 import com.example.vovotapesa.ui.app.screens.HomeScreen
 import com.example.vovotapesa.ui.app.screens.LoginScreen
 import com.example.vovotapesa.ui.app.screens.ProfileScreen
-import com.example.vovotapesa.ui.app.screens.SignUpScreen
+
 
 sealed class Rooter{
   data class Login(val name: String="login"): Rooter()

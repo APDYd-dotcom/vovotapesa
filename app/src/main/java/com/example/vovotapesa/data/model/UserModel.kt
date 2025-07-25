@@ -6,6 +6,7 @@ data class User(
 
 data class Country(
   val name: String,
+  val pref: String,
   val flagResId: Int
 )
 

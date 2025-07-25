@@ -1,118 +1,183 @@
-package com.example.vovotapesa.ui.app.screens
-
-import android.R.attr.password
-import android.widget.Button
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
+import android.app.DatePickerDialog
+import android.widget.DatePicker
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.motionEventSpy
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.vovotapesa.ui.app.components.HeaderTextComponent
-import com.example.vovotapesa.R
-import com.example.vovotapesa.ui.app.components.CountryDropdownWithFlags
-import com.example.vovotapesa.ui.app.components.DocumentsType
-import com.example.vovotapesa.ui.app.components.MediumTextComponent
-import com.example.vovotapesa.ui.app.components.MyPasswordTextField
-import com.example.vovotapesa.ui.app.components.MyTextFieldComponent
-import com.example.vovotapesa.ui.app.components.NormalTextComponent
+import java.util.*
 
 @Composable
 fun SignUpScreen(){
-  val ( email, setEmail) = rememberSaveable { mutableStateOf("") }
-  val ( password, setPassword) = rememberSaveable { mutableStateOf("") }
 
-  Scaffold { innerppading ->
-    Column(
-      modifier = Modifier.fillMaxSize()
-        .padding(innerppading)
-        .padding(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-      Image(
-        painter = painterResource(id = R.drawable.logo),
-        contentDescription = "Logo",
-        modifier = Modifier.size(size = 180.dp)
-      )
+  var step by remember { mutableStateOf(1) }
 
-      HeaderTextComponent(value = "Login")
-      Spacer(modifier = Modifier.height(height = 8.dp))
-      Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-      ){
-        CountryDropdownWithFlags()
-//        Spacer(modifier = Modifier.width(3.dp))
-//        MyTextFieldComponent(
-//          value = email,
-//          onValueChange = setEmail,
-//          labelText = "Email",
-//          leadingIcon = Icons.Default.Email,
-//        )
+  // Form state variables
+  var name by remember { mutableStateOf("") }
+  var birthDate by remember { mutableStateOf("") }
+  var country by remember { mutableStateOf("") }
+  var document by remember { mutableStateOf("") }
+  var phone by remember { mutableStateOf("") }
+  var pin by remember { mutableStateOf("") }
+  var email by remember { mutableStateOf("") }
+  var password by remember { mutableStateOf("") }
+
+  Scaffold{innerppading ->
+
+
+    Column(modifier = Modifier.padding(16.dp).padding(innerppading)) {
+      when (step) {
+        1 -> StepOne(
+          name,
+          birthDate,
+          onNameChange = { name = it },
+          onDateChange = { birthDate = it })
+
+        2 -> StepTwo(
+          country,
+          document,
+          onCountryChange = { country = it },
+          onDocumentChange = { document = it })
+
+        3 -> StepThree(phone, pin, onPhoneChange = { phone = it }, onPinChange = { pin = it })
+        4 -> StepFour(
+          email,
+          password,
+          onEmailChange = { email = it },
+          onPasswordChange = { password = it })
       }
 
-      Spacer(modifier = Modifier.height(height = 8.dp))
-      DocumentsType()
-      Spacer(modifier = Modifier.height(height = 4.dp))
-      Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-      ) {
-        TextButton(
-          onClick = {}
-        ) {
-          MediumTextComponent(value = "Forget password?", color = MaterialTheme.colorScheme.primary)
-        }
-      }
-      Spacer(modifier = Modifier.height(height = 4.dp))
+      Spacer(modifier = Modifier.height(16.dp))
 
-      Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Bottom
-      ) {
-        Row(
-          modifier = Modifier.fillMaxWidth(),
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.Center
-        ) {
-          NormalTextComponent(value = "Not yet registered?",color = Color.Black)
-          TextButton(
-            onClick = {}
-          ) {
-            NormalTextComponent(value = "Create an account now.", color = MaterialTheme.colorScheme.primary)
+      Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+        if (step > 1) {
+          Button(onClick = { step-- }) {
+            Text("Previous")
           }
         }
-        Spacer(modifier = Modifier.height(height = 32.dp))
+        if (step < 4) {
+          Button(onClick = { step++ }) {
+            Text("Next")
+          }
+        } else {
+          Button(onClick = {
+            // Submit form here
+            println("Form submitted: $name, $birthDate, $country, $document, $phone, $pin, $email, $password")
+          }) {
+            Text("Submit")
+          }
+        }
       }
     }
   }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun preview(){
-  SignUpScreen()
+fun StepOne(name: String, birthDate: String, onNameChange: (String) -> Unit, onDateChange: (String) -> Unit) {
+  val context = LocalContext.current
+  val calendar = Calendar.getInstance()
+
+  val datePicker = remember {
+    DatePickerDialog(
+      context,
+      { _: DatePicker, year: Int, month: Int, day: Int ->
+        onDateChange("$day/${month + 1}/$year")
+      },
+      calendar.get(Calendar.YEAR),
+      calendar.get(Calendar.MONTH),
+      calendar.get(Calendar.DAY_OF_MONTH)
+    )
+  }
+
+  OutlinedTextField(
+    value = name,
+    onValueChange = onNameChange,
+    label = { Text("Name") },
+    modifier = Modifier.fillMaxWidth()
+  )
+
+  Spacer(modifier = Modifier.height(8.dp))
+
+  OutlinedTextField(
+    value = birthDate,
+    onValueChange = {},
+    label = { Text("Birth Date") },
+    modifier = Modifier
+      .fillMaxWidth()
+      .clickable { datePicker.show() },
+    enabled = false
+  )
+}
+
+@Composable
+fun StepTwo(country: String, document: String, onCountryChange: (String) -> Unit, onDocumentChange: (String) -> Unit) {
+  OutlinedTextField(
+    value = country,
+    onValueChange = onCountryChange,
+    label = { Text("Country") },
+    modifier = Modifier.fillMaxWidth()
+  )
+
+  Spacer(modifier = Modifier.height(8.dp))
+
+  OutlinedTextField(
+    value = document,
+    onValueChange = onDocumentChange,
+    label = { Text("ID Document") },
+    modifier = Modifier.fillMaxWidth()
+  )
+}
+
+@Composable
+fun StepThree(phone: String, pin: String, onPhoneChange: (String) -> Unit, onPinChange: (String) -> Unit) {
+  OutlinedTextField(
+    value = phone,
+    onValueChange = onPhoneChange,
+    label = { Text("Phone Number") },
+    keyboardOptions = KeyboardOptions(
+      keyboardType = KeyboardType.Phone
+    ),
+    modifier = Modifier.fillMaxWidth()
+  )
+
+  Spacer(modifier = Modifier.height(8.dp))
+
+  OutlinedTextField(
+    value = pin,
+    onValueChange = onPinChange,
+    label = { Text("PIN") },
+    keyboardOptions = KeyboardOptions(
+      keyboardType = KeyboardType.NumberPassword
+    ),
+    modifier = Modifier.fillMaxWidth()
+  )
+}
+
+@Composable
+fun StepFour(email: String, password: String, onEmailChange: (String) -> Unit, onPasswordChange: (String) -> Unit) {
+  OutlinedTextField(
+    value = email,
+    onValueChange = onEmailChange,
+    label = { Text("Email") },
+    keyboardOptions = KeyboardOptions(
+      keyboardType = KeyboardType.Email
+    ),
+    modifier = Modifier.fillMaxWidth()
+  )
+
+  Spacer(modifier = Modifier.height(8.dp))
+
+  OutlinedTextField(
+    value = password,
+    onValueChange = onPasswordChange,
+    label = { Text("Password") },
+    keyboardOptions = KeyboardOptions(
+      keyboardType = KeyboardType.Password
+    ),
+    modifier = Modifier.fillMaxWidth()
+  )
 }

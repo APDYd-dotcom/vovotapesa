@@ -23,17 +23,16 @@ fun CountryDropdownWithFlags() {
   val context = LocalContext.current
 
   val countries = listOf(
-    Country("Burundi", R.drawable.bi),
-    Country("Kenya", R.drawable.ke),
-    Country("Rwanda", R.drawable.rw),
-    Country("Tanzania", R.drawable.tz),
-    Country("Uganda", R.drawable.ug),
-//    Country("South Sudan", R.drawable.flag_south_sudan),
-    Country("RDC", R.drawable.cd),
-//    Country("Somalia", R.drawable.Somalia)
+    Country("Burundi", pref = "+257", R.drawable.bi),
+    Country("Kenya", pref = "+260", R.drawable.ke),
+    Country("Rwanda", pref = "+250",R.drawable.rw),
+    Country("Tanzania", pref = "+255",R.drawable.tz),
+    Country("Uganda", pref = "+257",R.drawable.ug),
+//    Country("South Sudan", pref = "+257",R.drawable.flag_south_sudan),
+    Country("RDC", pref = "+247",R.drawable.cd),
+//    Country("Somalia", pref = "+257",R.drawable.Somalia)
   )
 
-  val documents = listOf("Passport", "CNI", "Driver Licence")
 
   var expanded by remember { mutableStateOf(false) }
   var selectedCountry by remember { mutableStateOf(countries[0]) }
