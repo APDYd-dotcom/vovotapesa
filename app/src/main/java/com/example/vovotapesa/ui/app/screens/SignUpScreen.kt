@@ -1,81 +1,84 @@
 import android.app.DatePickerDialog
 import android.widget.DatePicker
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.vovotapesa.R
+import com.example.vovotapesa.data.model.Country
+import com.example.vovotapesa.ui.app.components.MyTextFieldComponent
 import java.util.*
 
+
 @Composable
-fun SignUpScreen(){
+fun SignUpScreen() {
+  var currentStep by remember { mutableStateOf(1) }
 
-  var step by remember { mutableStateOf(1) }
-
-  // Form state variables
+  // Form fields for each step
   var name by remember { mutableStateOf("") }
   var birthDate by remember { mutableStateOf("") }
+
   var country by remember { mutableStateOf("") }
-  var document by remember { mutableStateOf("") }
+  var numero by remember { mutableStateOf("") }
+
   var phone by remember { mutableStateOf("") }
+
   var pin by remember { mutableStateOf("") }
+
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
 
-  Scaffold{innerppading ->
+  Column(modifier = Modifier.padding(16.dp)) {
+    when (currentStep) {
+      1 -> StepOne(name, birthDate, onNameChange = { name = it }, onDateChange = { birthDate = it })
+      2 -> StepTwo( phone, setPhone = { phone = it }, numero, setNumero = { numero = it })
+      3 -> StepThree( pin, onPinChange = { pin = it } )
+      4 -> StepFour(email, password, onEmailChange = { email = it }, onPasswordChange = { password = it })
+    }
 
+    Spacer(modifier = Modifier.height(24.dp))
 
-    Column(modifier = Modifier.padding(16.dp).padding(innerppading)) {
-      when (step) {
-        1 -> StepOne(
-          name,
-          birthDate,
-          onNameChange = { name = it },
-          onDateChange = { birthDate = it })
-
-        2 -> StepTwo(
-          country,
-          document,
-          onCountryChange = { country = it },
-          onDocumentChange = { document = it })
-
-        3 -> StepThree(phone, pin, onPhoneChange = { phone = it }, onPinChange = { pin = it })
-        4 -> StepFour(
-          email,
-          password,
-          onEmailChange = { email = it },
-          onPasswordChange = { password = it })
-      }
-
-      Spacer(modifier = Modifier.height(16.dp))
-
-      Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-        if (step > 1) {
-          Button(onClick = { step-- }) {
-            Text("Previous")
-          }
+    Row(
+      horizontalArrangement = Arrangement.SpaceBetween,
+      modifier = Modifier.fillMaxWidth()
+    ) {
+      if (currentStep > 1) {
+        Button(onClick = { currentStep-- }) {
+          Text("Previous")
         }
-        if (step < 4) {
-          Button(onClick = { step++ }) {
-            Text("Next")
-          }
-        } else {
-          Button(onClick = {
-            // Submit form here
-            println("Form submitted: $name, $birthDate, $country, $document, $phone, $pin, $email, $password")
-          }) {
-            Text("Submit")
-          }
+      }
+      if (currentStep < 4) {
+        Button(onClick = { currentStep++ }) {
+          Text("Next")
+        }
+      } else {
+        Button(onClick = {
+          // Handle final form submission
+          println("Submitting: $name, $birthDate, $country, $numero, $phone, $pin, $email, $password")
+        }) {
+          Text("Submit")
         }
       }
     }
   }
 }
 
+// Step One
 @Composable
 fun StepOne(name: String, birthDate: String, onNameChange: (String) -> Unit, onDateChange: (String) -> Unit) {
   val context = LocalContext.current
@@ -113,36 +116,180 @@ fun StepOne(name: String, birthDate: String, onNameChange: (String) -> Unit, onD
   )
 }
 
+// Step Two
 @Composable
-fun StepTwo(country: String, document: String, onCountryChange: (String) -> Unit, onDocumentChange: (String) -> Unit) {
-  OutlinedTextField(
-    value = country,
-    onValueChange = onCountryChange,
-    label = { Text("Country") },
+fun StepTwo(phone: String, setPhone: (String) -> Unit, numero: String, setNumero: (String) -> Unit) {
+
+  val countries = listOf(
+    Country("Burundi", pref = "+257", com.example.vovotapesa.R.drawable.bi),
+    Country("Kenya", pref = "+260", com.example.vovotapesa.R.drawable.ke),
+    Country("Rwanda", pref = "+250", com.example.vovotapesa.R.drawable.rw),
+    Country("Tanzania", pref = "+255", com.example.vovotapesa.R.drawable.tz),
+    Country("Uganda", pref = "+257", com.example.vovotapesa.R.drawable.ug),
+//    Country("South Sudan", pref = "+257",R.drawable.flag_south_sudan),
+    Country("RDC", pref = "+247", R.drawable.cd),
+//    Country("Somalia", pref = "+257",R.drawable.Somalia)
+  )
+
+  val documents = listOf("Passport", "CNI", "Driver Licence")
+
+
+  var expanded by remember { mutableStateOf(false) }
+  var selectedCountry by remember { mutableStateOf(countries[0]) }
+
+
+  Box(
+    modifier = Modifier.fillMaxWidth()
+    // .padding(16.dp)
+  ) {
+
+    OutlinedTextField(
+      value = selectedCountry.name,
+      onValueChange = {},
+      readOnly = true,
+      shape = RoundedCornerShape(10.dp),
+//      label = { Text("Select Country") },
+      modifier = Modifier.fillMaxWidth()
+        .clickable { expanded = true },
+      leadingIcon = {
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier.padding(8.dp)
+        ) {
+          Image(
+            painter = painterResource(id = selectedCountry.flagResId),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp)
+          )
+          Spacer(modifier = Modifier.width(3.dp))
+          Icon(
+            imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+            contentDescription = null,
+            Modifier.clickable { expanded = !expanded }
+          )
+        }
+      }
+    )
+
+    DropdownMenu(
+      expanded = expanded,
+      onDismissRequest = { expanded = false },
+      //modifier = Modifier.fillMaxWidth()
+    ) {
+      countries.forEach { country ->
+        DropdownMenuItem(
+          text = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+              Image(
+                painter = painterResource(id = country.flagResId),
+                contentDescription = null,
+                modifier = Modifier
+                  .size(24.dp)
+                  .padding(end = 8.dp)
+              )
+              Text(text = country.name)
+            }
+          },
+          onClick = {
+            selectedCountry = country
+            expanded = false
+          }
+        )
+      }
+    }
+  }
+
+  Spacer(modifier = Modifier.height(8.dp))
+
+  var expandedd by remember { mutableStateOf(false) }
+  var selectedDocument by remember { mutableStateOf(documents[0]) }
+
+  Box(
+    modifier = Modifier.fillMaxWidth()
+    // .padding(16.dp)
+  ) {
+
+    OutlinedTextField(
+      value = selectedDocument,
+      onValueChange = {},
+      readOnly = true,
+      shape = RoundedCornerShape(10.dp),
+//      label = { Text("Select Country") },
+      modifier = Modifier.fillMaxWidth()
+        .clickable { expandedd = true },
+      leadingIcon = {
+        Row(
+          verticalAlignment = Alignment.CenterVertically,
+          modifier = Modifier.padding(8.dp)
+        ) {
+          Text("Select")
+          Spacer(modifier = Modifier.width(3.dp))
+          androidx.compose.material3.Icon(
+            imageVector = if (expandedd) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+            contentDescription = null,
+            Modifier.clickable { expandedd = !expanded }
+          )
+        }
+      }
+    )
+
+    DropdownMenu(
+      expanded = expandedd,
+      onDismissRequest = { expandedd = false },
+      //modifier = Modifier.fillMaxWidth()
+    ) {
+      documents.forEach { doc ->
+        DropdownMenuItem(
+          text = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+              Text(text = doc)
+            }
+          },
+          onClick = {
+            selectedDocument = doc
+            expandedd = false
+          }
+        )
+      }
+    }
+  }
+
+  MyTextFieldComponent(
+    value = numero,
+    onValueChange = setNumero,
+    labelText = "ID Number",
+    leadingIcon = Icons.Default.AccountBox,
     modifier = Modifier.fillMaxWidth()
   )
 
   Spacer(modifier = Modifier.height(8.dp))
-
-  OutlinedTextField(
-    value = document,
-    onValueChange = onDocumentChange,
-    label = { Text("ID Document") },
-    modifier = Modifier.fillMaxWidth()
-  )
-}
-
-@Composable
-fun StepThree(phone: String, pin: String, onPhoneChange: (String) -> Unit, onPinChange: (String) -> Unit) {
   OutlinedTextField(
     value = phone,
-    onValueChange = onPhoneChange,
-    label = { Text("Phone Number") },
-    keyboardOptions = KeyboardOptions(
-      keyboardType = KeyboardType.Phone
-    ),
-    modifier = Modifier.fillMaxWidth()
+    onValueChange = setPhone,
+    shape = RoundedCornerShape(10.dp),
+//      label = { Text("Select Country") },
+    modifier = Modifier.fillMaxWidth(),
+    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+    leadingIcon = {
+      Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(8.dp)
+      ) {
+        Text(text = selectedCountry.pref)
+        Spacer(modifier = Modifier.width(3.dp))
+        Icon(
+          imageVector = Icons.Default.Phone ,
+          contentDescription = null,
+        )
+      }
+    }
   )
+
+}
+
+// Step Three
+@Composable
+fun StepThree( pin: String, onPinChange: (String) -> Unit) {
 
   Spacer(modifier = Modifier.height(8.dp))
 
@@ -157,6 +304,7 @@ fun StepThree(phone: String, pin: String, onPhoneChange: (String) -> Unit, onPin
   )
 }
 
+// Step Four
 @Composable
 fun StepFour(email: String, password: String, onEmailChange: (String) -> Unit, onPasswordChange: (String) -> Unit) {
   OutlinedTextField(
