@@ -7,6 +7,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Phone
@@ -30,7 +32,8 @@ fun SignUpScreen() {
   var currentStep by remember { mutableStateOf(1) }
 
   // Form fields for each step
-  var name by remember { mutableStateOf("") }
+  var firstname by remember { mutableStateOf("") }
+  var lastname by remember { mutableStateOf("") }
   var birthDate by remember { mutableStateOf("") }
 
   var country by remember { mutableStateOf("") }
@@ -45,7 +48,14 @@ fun SignUpScreen() {
 
   Column(modifier = Modifier.padding(16.dp)) {
     when (currentStep) {
-      1 -> StepOne(name, birthDate, onNameChange = { name = it }, onDateChange = { birthDate = it })
+      1 -> StepOne(
+        firstname = firstname,
+        lastname = lastname,
+        birthDate = birthDate,
+        setFirstName = { firstname = it },
+        onDateChange = { birthDate = it },
+        setLastName = { lastname = it }
+      )
       2 -> StepTwo( phone, setPhone = { phone = it }, numero, setNumero = { numero = it })
       3 -> StepThree( pin, onPinChange = { pin = it } )
       4 -> StepFour(email, password, onEmailChange = { email = it }, onPasswordChange = { password = it })
@@ -69,7 +79,7 @@ fun SignUpScreen() {
       } else {
         Button(onClick = {
           // Handle final form submission
-          println("Submitting: $name, $birthDate, $country, $numero, $phone, $pin, $email, $password")
+          println("Submitting: $birthDate, $country, $numero, $phone, $pin, $email, $password")
         }) {
           Text("Submit")
         }
@@ -80,7 +90,14 @@ fun SignUpScreen() {
 
 // Step One
 @Composable
-fun StepOne(name: String, birthDate: String, onNameChange: (String) -> Unit, onDateChange: (String) -> Unit) {
+fun StepOne(
+  firstname: String,
+  lastname: String,
+  setLastName: (String) -> Unit,
+  setFirstName: (String) -> Unit,
+  birthDate: String,
+  onDateChange: (String) -> Unit
+) {
   val context = LocalContext.current
   val calendar = Calendar.getInstance()
 
@@ -96,10 +113,19 @@ fun StepOne(name: String, birthDate: String, onNameChange: (String) -> Unit, onD
     )
   }
 
-  OutlinedTextField(
-    value = name,
-    onValueChange = onNameChange,
-    label = { Text("Name") },
+  MyTextFieldComponent(
+    value = firstname,
+    onValueChange = setFirstName,
+    labelText = "First Name",
+    leadingIcon = Icons.Default.AccountCircle,
+    modifier = Modifier.fillMaxWidth()
+  )
+
+  MyTextFieldComponent(
+    value = lastname,
+    onValueChange = setLastName,
+    labelText = "Laste Name",
+    leadingIcon = Icons.Default.AccountCircle,
     modifier = Modifier.fillMaxWidth()
   )
 
@@ -108,11 +134,18 @@ fun StepOne(name: String, birthDate: String, onNameChange: (String) -> Unit, onD
   OutlinedTextField(
     value = birthDate,
     onValueChange = {},
-    label = { Text("Birth Date") },
+    label = { Text(text = "Birth Date") },
+    leadingIcon = {
+      Icon(
+        imageVector = Icons.Default.DateRange,
+        contentDescription = "Date",
+        modifier = Modifier.clickable { datePicker.show() }
+      )
+    },
     modifier = Modifier
       .fillMaxWidth()
       .clickable { datePicker.show() },
-    enabled = false
+    readOnly = true // Use false to make it read-only while still allowing the modifier
   )
 }
 
@@ -121,11 +154,11 @@ fun StepOne(name: String, birthDate: String, onNameChange: (String) -> Unit, onD
 fun StepTwo(phone: String, setPhone: (String) -> Unit, numero: String, setNumero: (String) -> Unit) {
 
   val countries = listOf(
-    Country("Burundi", pref = "+257", com.example.vovotapesa.R.drawable.bi),
-    Country("Kenya", pref = "+260", com.example.vovotapesa.R.drawable.ke),
-    Country("Rwanda", pref = "+250", com.example.vovotapesa.R.drawable.rw),
-    Country("Tanzania", pref = "+255", com.example.vovotapesa.R.drawable.tz),
-    Country("Uganda", pref = "+257", com.example.vovotapesa.R.drawable.ug),
+    Country("Burundi", pref = "+257", R.drawable.bi),
+    Country("Kenya", pref = "+260", R.drawable.ke),
+    Country("Rwanda", pref = "+250", R.drawable.rw),
+    Country("Tanzania", pref = "+255", R.drawable.tz),
+    Country("Uganda", pref = "+257", R.drawable.ug),
 //    Country("South Sudan", pref = "+257",R.drawable.flag_south_sudan),
     Country("RDC", pref = "+247", R.drawable.cd),
 //    Country("Somalia", pref = "+257",R.drawable.Somalia)
@@ -140,7 +173,6 @@ fun StepTwo(phone: String, setPhone: (String) -> Unit, numero: String, setNumero
 
   Box(
     modifier = Modifier.fillMaxWidth()
-    // .padding(16.dp)
   ) {
 
     OutlinedTextField(
@@ -173,8 +205,7 @@ fun StepTwo(phone: String, setPhone: (String) -> Unit, numero: String, setNumero
 
     DropdownMenu(
       expanded = expanded,
-      onDismissRequest = { expanded = false },
-      //modifier = Modifier.fillMaxWidth()
+      onDismissRequest = { expanded = false }
     ) {
       countries.forEach { country ->
         DropdownMenuItem(
@@ -224,7 +255,7 @@ fun StepTwo(phone: String, setPhone: (String) -> Unit, numero: String, setNumero
         ) {
           Text("Select")
           Spacer(modifier = Modifier.width(3.dp))
-          androidx.compose.material3.Icon(
+          Icon(
             imageVector = if (expandedd) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
             contentDescription = null,
             Modifier.clickable { expandedd = !expanded }
