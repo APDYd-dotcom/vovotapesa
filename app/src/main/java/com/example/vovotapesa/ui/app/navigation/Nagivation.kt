@@ -1,6 +1,5 @@
 package com.example.vovotapesa.ui.app.navigation
 
-import SignUpScreen
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,6 +12,7 @@ import com.example.vovotapesa.ui.app.pages.WithdrawPage
 import com.example.vovotapesa.ui.app.screens.HomeScreen
 import com.example.vovotapesa.ui.app.screens.LoginScreen
 import com.example.vovotapesa.ui.app.screens.ProfileScreen
+import com.example.vovotapesa.ui.app.screens.SignUpScreen
 
 
 sealed class Rooter{
@@ -43,10 +43,14 @@ fun MyNavigation(navHostController: NavHostController){
       )
     }
     composable(route = Rooter.SignUp().name) {
-      SignUpScreen()
+      SignUpScreen(
+        onLoginClick = {navHostController.navigate(Rooter.Login().name)}
+      )
     }
     composable(route = Rooter.Home().name) {
-      HomeScreen()
+      HomeScreen(
+        onProfileClick = { navHostController.navigate(Rooter.Profile().name) }
+      )
     }
     composable(route = Rooter.Profile().name) {
       ProfileScreen()
@@ -59,7 +63,7 @@ fun MyNavigation(navHostController: NavHostController){
 fun MyPageNavigation(navHostController: NavHostController){
   NavHost(
     navController = navHostController,
-    startDestination = PageRooter.Home().name
+    startDestination = PageRooter.Wallet().name
   ){
     composable(route= PageRooter.Home().name) {
       HomePage()

@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.vovotapesa.ui.app.components.CountryDropdownWithFlags
 import com.example.vovotapesa.ui.app.navigation.App
+import com.example.vovotapesa.ui.theme.VovotapesaTheme
 
 
 class MainActivity : ComponentActivity() {
@@ -13,7 +14,9 @@ class MainActivity : ComponentActivity() {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
-      App()
+      VovotapesaTheme{
+        App()
+      }
     }
   }
 }

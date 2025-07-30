@@ -96,7 +96,7 @@ fun LoginScreen(onLoginClick:()-> Unit, onSignupClick:()-> Unit){
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.Center
         ) {
-          NormalTextComponent(value = "Not yet registered?",color = Color.Black)
+          NormalTextComponent(value = "Not yet registered?",color = MaterialTheme.colorScheme.onBackground)
           TextButton(
             onClick = onSignupClick
           ) {

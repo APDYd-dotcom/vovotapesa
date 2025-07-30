@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,7 +52,7 @@ fun MyTextFieldComponent(
     label = { Text(text = labelText) },
     leadingIcon = {
       if (leadingIcon != null) {
-        Icon(imageVector = leadingIcon, contentDescription = null)
+        Icon(imageVector = leadingIcon, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
       }
     },
     keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
@@ -82,7 +83,7 @@ fun MyPasswordTextField(
     label = { Text(text = labelText) },
     leadingIcon = {
       if (leadingIcon != null) {
-        Icon(imageVector = leadingIcon, contentDescription = null)
+        Icon(imageVector = leadingIcon, contentDescription = null,tint = MaterialTheme.colorScheme.primary)
       }
     },
     trailingIcon = {
@@ -94,7 +95,7 @@ fun MyPasswordTextField(
       val description = if (passwordVisible) "Hide password" else "Show password"
 
       IconButton(onClick = { passwordVisible = !passwordVisible }) {
-        Icon(painter = iconResource, contentDescription = description)
+        Icon(painter = iconResource, contentDescription = description, tint = MaterialTheme.colorScheme.primary)
       }
     },
     enabled = enabled,

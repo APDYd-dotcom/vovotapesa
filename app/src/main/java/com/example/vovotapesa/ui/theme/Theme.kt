@@ -17,16 +17,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-  primary = Purple80,
-  secondary = PurpleGrey80,
-  tertiary = Pink80
+private val LightColorScheme = lightColorScheme(
+  primary = PrimaryColor,
+  secondary = SecondaryColor,
+  background = BackgroundColor,
+  surface = SurfaceColor,
+  onPrimary = OnPrimary,
+  onSecondary = OnSecondary,
+  onBackground = OnBackground,
+  onSurface = OnSurface
 )
 
-private val LightColorScheme = lightColorScheme(
-  primary = Purple40,
-  secondary = PurpleGrey40,
-  tertiary = Pink40
+private val DarkColorScheme = darkColorScheme(
+  primary = PrimaryVariant,
+  secondary = SecondaryColor,
+  background = Color(0xFF121212),
+  surface = Color(0xFF1E1E1E),
+  onPrimary = Color.White,
+  onSecondary = Color.White,
+  onBackground = Color.White,
+  onSurface = Color.White
 )
 
 @Composable
@@ -50,8 +60,10 @@ fun VovotapesaTheme(
     SideEffect {
       val window = (view.context as Activity).window
       window.statusBarColor = Color.Transparent.toArgb()
+
+      // Use WindowCompat for setting status bar icon color
       WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-        colorScheme.background.luminance() > 0.5f
+        colorScheme.background.luminance() > 0.5f // true for dark icons, false for light icons
     }
   }
 

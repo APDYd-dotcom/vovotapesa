@@ -47,7 +47,7 @@ fun HeaderTextComponent(value: String){
     modifier = Modifier,
     text = value,
     fontSize = title(),
-    fontWeight = FontWeight.Bold,
+    fontWeight = FontWeight.W400,
     fontFamily = FontFamily.SansSerif
   )
 }

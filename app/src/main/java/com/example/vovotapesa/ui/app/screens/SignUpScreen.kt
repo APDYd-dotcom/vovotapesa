@@ -1,6 +1,9 @@
+package com.example.vovotapesa.ui.app.screens
+
 import android.app.DatePickerDialog
 import android.widget.DatePicker
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,26 +12,32 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.vovotapesa.R
 import com.example.vovotapesa.data.model.Country
+import com.example.vovotapesa.ui.app.components.HeaderTextComponent
+import com.example.vovotapesa.ui.app.components.MyPasswordTextField
 import com.example.vovotapesa.ui.app.components.MyTextFieldComponent
+import com.example.vovotapesa.ui.app.components.NormalTextComponent
 import java.util.*
 
 
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(onLoginClick: ()-> Unit) {
   var currentStep by remember { mutableStateOf(1) }
 
   // Form fields for each step
@@ -45,47 +54,101 @@ fun SignUpScreen() {
 
   var email by remember { mutableStateOf("") }
   var password by remember { mutableStateOf("") }
+  var confirmpassword by remember { mutableStateOf("") }
 
-  Column(modifier = Modifier.padding(16.dp)) {
-    when (currentStep) {
-      1 -> StepOne(
-        firstname = firstname,
-        lastname = lastname,
-        birthDate = birthDate,
-        setFirstName = { firstname = it },
-        onDateChange = { birthDate = it },
-        setLastName = { lastname = it }
-      )
-      2 -> StepTwo( phone, setPhone = { phone = it }, numero, setNumero = { numero = it })
-      3 -> StepThree( pin, onPinChange = { pin = it } )
-      4 -> StepFour(email, password, onEmailChange = { email = it }, onPasswordChange = { password = it })
-    }
-
-    Spacer(modifier = Modifier.height(24.dp))
-
-    Row(
-      horizontalArrangement = Arrangement.SpaceBetween,
-      modifier = Modifier.fillMaxWidth()
+  Scaffold(
+    modifier = Modifier.fillMaxSize()
+      .padding(8.dp)
+      .background(color = MaterialTheme.colorScheme.background)
+  ) { innerppading ->
+    Column(
+      modifier = Modifier.padding(16.dp)
+        .padding(innerppading),
+      horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      if (currentStep > 1) {
-        Button(onClick = { currentStep-- }) {
-          Text("Previous")
+      Image(
+        painter = painterResource(id = R.drawable.logo),
+        contentDescription = "logo",
+        modifier = Modifier.size(size = 180.dp)
+      )
+
+      HeaderTextComponent(value = "Register an account")
+      Spacer(modifier = Modifier.height(height = 8.dp))
+      when (currentStep) {
+        1 -> StepOne(
+          firstname = firstname,
+          lastname = lastname,
+          birthDate = birthDate,
+          setFirstName = { firstname = it },
+          onDateChange = { birthDate = it },
+          setLastName = { lastname = it }
+        )
+        2 -> StepTwo(
+          phone,
+          setPhone = { phone = it },
+          numero,
+          setNumero = { numero = it }
+        )
+        3 -> StepThree(
+          pin,
+          onPinChange = { pin = it }
+        )
+        4 -> StepFour(
+          email = email,
+          password = password,
+          confirmpassword = confirmpassword,
+          onEmailChange = { email = it },
+          onPasswordChange = { password = it },
+          onConfirmPasswordChange = { confirmpassword = it}
+        )
+      }
+
+      Spacer(modifier = Modifier.height(24.dp))
+
+      Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()
+      ) {
+        if (currentStep > 1) {
+          Button(onClick = { currentStep-- }) {
+            Text("Previous")
+          }
+        }
+        if (currentStep < 4) {
+          Button(onClick = { currentStep++ }) {
+            Text("Next")
+          }
+        } else {
+          Button(onClick = {
+            // Handle final form submission
+            println("Submitting: $birthDate, $country, $numero, $phone, $pin, $email, $password")
+          }) {
+            Text("Submit")
+          }
         }
       }
-      if (currentStep < 4) {
-        Button(onClick = { currentStep++ }) {
-          Text("Next")
+
+      Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom
+      ) {
+        Row(
+          modifier = Modifier.fillMaxWidth(),
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.Center
+        ) {
+          NormalTextComponent(value = "Already have an account?",color = MaterialTheme.colorScheme.onBackground)
+          TextButton(
+            onClick = onLoginClick
+          ) {
+            NormalTextComponent(value = "Login now.", color = MaterialTheme.colorScheme.primary)
+          }
         }
-      } else {
-        Button(onClick = {
-          // Handle final form submission
-          println("Submitting: $birthDate, $country, $numero, $phone, $pin, $email, $password")
-        }) {
-          Text("Submit")
-        }
+        Spacer(modifier = Modifier.height(height = 32.dp))
       }
     }
   }
+
 }
 
 // Step One
@@ -139,6 +202,7 @@ fun StepOne(
       Icon(
         imageVector = Icons.Default.DateRange,
         contentDescription = "Date",
+        tint = MaterialTheme.colorScheme.primary,
         modifier = Modifier.clickable { datePicker.show() }
       )
     },
@@ -298,7 +362,7 @@ fun StepTwo(phone: String, setPhone: (String) -> Unit, numero: String, setNumero
     value = phone,
     onValueChange = setPhone,
     shape = RoundedCornerShape(10.dp),
-//      label = { Text("Select Country") },
+    label = { Text("Phone Number") },
     modifier = Modifier.fillMaxWidth(),
     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
     leadingIcon = {
@@ -324,39 +388,47 @@ fun StepThree( pin: String, onPinChange: (String) -> Unit) {
 
   Spacer(modifier = Modifier.height(8.dp))
 
-  OutlinedTextField(
+  MyTextFieldComponent(
     value = pin,
     onValueChange = onPinChange,
-    label = { Text("PIN") },
-    keyboardOptions = KeyboardOptions(
-      keyboardType = KeyboardType.NumberPassword
-    ),
+    labelText = "PIN",
+    leadingIcon = Icons.Default.Lock,
+    keyboardType = KeyboardType.NumberPassword,
     modifier = Modifier.fillMaxWidth()
   )
 }
 
 // Step Four
 @Composable
-fun StepFour(email: String, password: String, onEmailChange: (String) -> Unit, onPasswordChange: (String) -> Unit) {
-  OutlinedTextField(
+fun StepFour(email: String, confirmpassword: String, onConfirmPasswordChange: (String) -> Unit, password: String, onEmailChange: (String) -> Unit, onPasswordChange: (String) -> Unit) {
+  MyTextFieldComponent(
     value = email,
     onValueChange = onEmailChange,
-    label = { Text("Email") },
-    keyboardOptions = KeyboardOptions(
-      keyboardType = KeyboardType.Email
-    ),
+    labelText = "Email",
+    leadingIcon = Icons.Default.Email,
+    keyboardType = KeyboardType.Email,
     modifier = Modifier.fillMaxWidth()
   )
 
   Spacer(modifier = Modifier.height(8.dp))
 
-  OutlinedTextField(
+  MyPasswordTextField(
     value = password,
     onValueChange = onPasswordChange,
-    label = { Text("Password") },
-    keyboardOptions = KeyboardOptions(
-      keyboardType = KeyboardType.Password
-    ),
+    labelText = "Password",
+    leadingIcon = Icons.Default.Lock,
+    keyboardType = KeyboardType.Password,
+    modifier = Modifier.fillMaxWidth()
+  )
+
+  Spacer(modifier = Modifier.height(height = 4.dp))
+
+  MyPasswordTextField(
+    value = confirmpassword,
+    onValueChange = onConfirmPasswordChange,
+    labelText = "Confirm Password",
+    leadingIcon = Icons.Default.Lock,
+    keyboardType = KeyboardType.Password,
     modifier = Modifier.fillMaxWidth()
   )
 }
