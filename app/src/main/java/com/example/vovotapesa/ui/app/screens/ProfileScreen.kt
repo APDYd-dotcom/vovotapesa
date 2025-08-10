@@ -30,148 +30,99 @@ fun ProfileScreen(
   authViewModel: AuthViewModel
 ) {
   val primaryBlue = Color(0xFF008CFF)
-  //val tokenManager: TokenManager
   val scope = rememberCoroutineScope()
+
   Column(
     modifier = Modifier
       .fillMaxSize()
       .verticalScroll(rememberScrollState())
-      .padding(16.dp),
-
+      .padding(12.dp), // Reduced padding
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
 
-    Spacer(modifier = Modifier.height(16.dp))
-
-    Text(
-      text = "My Profile",
-      fontSize = 24.sp,
-      fontWeight = FontWeight.Bold,
-      color = MaterialTheme.colorScheme.primary
-    )
-
-    Spacer(modifier = Modifier.height(24.dp))
-
-    Box(
-      modifier = Modifier
-        .size(130.dp)
-        .clip(RoundedCornerShape(16.dp))
-        .background(MaterialTheme.colorScheme.surfaceVariant)
+    // Header
+    Row(
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier.fillMaxWidth()
     ) {
-      Icon(
-        imageVector = Icons.Default.Person,
-        contentDescription = "Profile image",
-        modifier = Modifier
-          .align(Alignment.Center)
-          .size(70.dp),
-        tint = MaterialTheme.colorScheme.onSurfaceVariant
-      )
-
-      Icon(
-        imageVector = Icons.Default.Check,
-        contentDescription = "Verified",
-        tint = primaryBlue,
-        modifier = Modifier
-          .align(Alignment.BottomEnd)
-          .padding(6.dp)
-          .size(20.dp)
+      Text(
+        text = "Profile",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.primary
       )
     }
 
-    Spacer(modifier = Modifier.height(20.dp))
+    Spacer(modifier = Modifier.height(12.dp))
 
-    Column(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(horizontal = 8.dp),
-      verticalArrangement = Arrangement.spacedBy(6.dp)
+    // Profile Picture + Info in Row
+    Row(
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-      ProfileInfoItem(label = "Name", value = "Prince Destin Yvan ARAKAZA")
-      ProfileInfoItem(label = "Email", value = "arakazaprincedestinyvan@gmail.com")
-      ProfileInfoItem(label = "Agent code", value = "10004")
-      ProfileInfoItem(label = "Commission", value = "0.00 Units")
-    }
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-
-
-    val scope = rememberCoroutineScope()
-
-    Button(
-      onClick = {
-        scope.launch {
-          authViewModel.logout()
-          navController.navigate(Rooter.Login().name)
-        }
+      Box(
+        modifier = Modifier
+          .size(80.dp) // Smaller photo
+          .clip(RoundedCornerShape(8.dp))
+          .background(MaterialTheme.colorScheme.surfaceVariant)
+      ) {
+        Icon(
+          imageVector = Icons.Default.Person,
+          contentDescription = "Profile image",
+          modifier = Modifier
+            .align(Alignment.Center)
+            .size(50.dp),
+          tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
       }
-    ) {
-      Text("Logout")
+
+      Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text("Prince Destin Yvan ARAKAZA", fontWeight = FontWeight.Bold)
+        Text("arakazaprincedestinyvan@gmail.com", fontSize = 12.sp)
+        Text("Agent code: 10004", fontSize = 12.sp)
+        Text("Commission: 0.00 Units", fontSize = 12.sp)
+      }
     }
 
-/*
-    Button(
-       // onClick = onLogoutClick,
+    Spacer(modifier = Modifier.height(12.dp))
+
+    // Action buttons
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+      Button(
+        onClick = { /* Cash logic */ },
+        colors = ButtonDefaults.buttonColors(containerColor = primaryBlue)
+      ) {
+        Text("Cash", color = Color.White)
+      }
+      Button(
         onClick = {
           scope.launch {
             authViewModel.logout()
             navController.navigate(Rooter.Login().name)
           }
         },
-        colors = ButtonDefaults.buttonColors(containerColor = primaryBlue),
-        shape = RoundedCornerShape(8.dp)
+        colors = ButtonDefaults.buttonColors(containerColor = primaryBlue)
       ) {
         Text("Logout", color = Color.White)
-      }
-*/
-
-    Spacer(modifier = Modifier.height(24.dp))
-
-    Text("Additional info", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-
-    Spacer(modifier = Modifier.height(12.dp))
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-      ProfileInfoItem(label = "Phone number", value = "67926885")
-      Row(verticalAlignment = Alignment.CenterVertically) {
-        Text("ID document: P00056651", fontSize = 14.sp)
-        Icon(Icons.Default.Check, contentDescription = null, tint = primaryBlue, modifier = Modifier.padding(start = 8.dp))
-        Icon(Icons.Default.AccountBox, contentDescription = null, tint = primaryBlue, modifier = Modifier.padding(start = 4.dp))
-      }
-      Row(verticalAlignment = Alignment.CenterVertically) {
-        Text("Current address: Bujumbura-Tenga-NTumangende", fontSize = 14.sp)
-        Icon(Icons.Default.Edit, contentDescription = null, tint = primaryBlue, modifier = Modifier.padding(start = 8.dp))
       }
     }
 
     Spacer(modifier = Modifier.height(16.dp))
-//Button(
-//  onClick = {}
-//) {
-//
-//  Text(
-//    text = "Change pin",
-//    color = MaterialTheme.colorScheme.background,
-////    textDecoration = TextDecoration.Underline,
-////    modifier = Modifier.padding(top = 12.dp)
-//  )
-//}
+
+    // Additional Info
+    Text("Additional info", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    ProfileInfoItemCompact("Phone number", "67926885")
+    ProfileInfoItemCompact("ID document", "P00056651")
+    ProfileInfoItemCompact("Current address", "Bujumbura-Tenga-NTumangende")
   }
 }
 
 @Composable
-fun ProfileInfoItem(label: String, value: String) {
-  Column {
-    Text(
-      text = "$label:",
-      fontSize = 14.sp,
-      color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-      fontWeight = FontWeight.SemiBold
-    )
-    Text(
-      text = value,
-      fontSize = 14.sp,
-      color = MaterialTheme.colorScheme.onBackground
-    )
+fun ProfileInfoItemCompact(label: String, value: String) {
+  Column(modifier = Modifier.fillMaxWidth()) {
+    Text("$label: $value", fontSize = 12.sp)
   }
 }

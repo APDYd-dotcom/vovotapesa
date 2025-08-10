@@ -13,17 +13,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.vovotapesa.ui.app.components.MediumTextComponent
 import com.example.vovotapesa.ui.app.components.NormalTextComponent
+import com.example.vovotapesa.R
 
 @Composable
 fun WalletPage() {
-
-  val isLight = !isSystemInDarkTheme()
+  
   val balance = 12.76
   val agentCode = "10004"
   val transactions = remember {
@@ -55,7 +56,7 @@ fun WalletPage() {
         horizontalArrangement = Arrangement.SpaceBetween
       ) {
         MediumTextComponent("Balance\n$balance Units", color = MaterialTheme.colorScheme.onBackground)
-        MediumTextComponent("Agent code\n$agentCode", color = MaterialTheme.colorScheme.onBackground)
+        MediumTextComponent("Account number\n$agentCode", color = MaterialTheme.colorScheme.onBackground)
       }
     }
 
@@ -65,9 +66,30 @@ fun WalletPage() {
         .padding(16.dp),
       horizontalArrangement = Arrangement.SpaceBetween
     ) {
-      Text("\uD83D\uDC47Received", color = Color(0xFF007BFF))
-      Text("\uD83D\uDD17Sent", color = Color(0xFF007BFF))
-      Text("\uD83D\uDD0DSearch", color = Color(0xFF007BFF))
+      Row {
+        Icon(
+          painter = painterResource(id = R.drawable.arow_withdrow),
+          contentDescription = "received",
+          modifier = Modifier.size(25.dp)
+        )
+        Text("Received", color = Color(0xFF007BFF))
+      }
+     Row {
+       Icon(
+         painter = painterResource(id = R.drawable.arow_send),
+         contentDescription = "received",
+         modifier = Modifier.size(25.dp)
+       )
+       Text("Sent", color = Color(0xFF007BFF))
+     }
+      Row{
+        Icon(
+          painter = painterResource(id = R.drawable.search),
+          contentDescription = "received",
+          modifier = Modifier.size(25.dp)
+        )
+        Text("Search", color = Color(0xFF007BFF))
+      }
     }
 
     Card(

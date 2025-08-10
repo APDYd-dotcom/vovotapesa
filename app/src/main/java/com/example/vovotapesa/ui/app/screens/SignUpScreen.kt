@@ -445,7 +445,8 @@ fun StepTwo(
           contentDescription = null,
         )
       }
-    }
+    },
+    singleLine = true
   )
 }
 
