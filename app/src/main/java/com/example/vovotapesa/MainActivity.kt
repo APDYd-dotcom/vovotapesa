@@ -7,8 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import com.example.vovotapesa.ui.app.components.CountryDropdownWithFlags
 import com.example.vovotapesa.ui.app.navigation.App
 import com.example.vovotapesa.ui.theme.VovotapesaTheme
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

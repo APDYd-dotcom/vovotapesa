@@ -3,12 +3,10 @@ package com.example.vovotapesa.ui.app.pages
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -18,10 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.vovotapesa.ui.app.components.MediumTextComponent
+import com.example.vovotapesa.ui.app.components.NormalTextComponent
 
 @Composable
 fun WalletPage() {
@@ -38,7 +35,6 @@ fun WalletPage() {
       .fillMaxSize()
       .background(color = MaterialTheme.colorScheme.background)
   ) {
-//    Header()
 
     Text(
       text = "My wallet",
@@ -52,14 +48,14 @@ fun WalletPage() {
         .fillMaxWidth()
         .padding(horizontal = 16.dp),
       shape = RoundedCornerShape(12.dp),
-      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = if (isLight) 0.6f else 1.0f))
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
       Row(
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.padding(16.dp).fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
       ) {
-        Text("Balance\n$balance Units", fontSize = 16.sp)
-        Text("Agent code: $agentCode", fontSize = 16.sp)
+        MediumTextComponent("Balance\n$balance Units", color = MaterialTheme.colorScheme.onBackground)
+        MediumTextComponent("Agent code\n$agentCode", color = MaterialTheme.colorScheme.onBackground)
       }
     }
 
@@ -79,7 +75,7 @@ fun WalletPage() {
         .fillMaxWidth()
         .padding(16.dp),
       shape = RoundedCornerShape(12.dp),
-      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = if (isLight) 0.6f else 1.0f))
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
       Column(modifier = Modifier.padding(16.dp)) {
         Text("Transactions", fontWeight = FontWeight.Bold)
@@ -104,9 +100,9 @@ fun WalletPage() {
                 .padding(vertical = 4.dp),
               horizontalArrangement = Arrangement.SpaceBetween
             ) {
-              Text(txn.date)
-              Text(txn.name)
-              Text("${txn.amount} Units", color = Color(0xFF007BFF))
+              NormalTextComponent(txn.date, color= MaterialTheme.colorScheme.onBackground)
+              NormalTextComponent(txn.name, color= MaterialTheme.colorScheme.onBackground)
+              NormalTextComponent("${txn.amount} $", color= MaterialTheme.colorScheme.primary)
             }
           }
         }
@@ -115,42 +111,10 @@ fun WalletPage() {
   }
 }
 
-//@Composable
-//fun Header() {
-//  Row(
-//    modifier = Modifier
-//      .fillMaxWidth()
-//      .padding(16.dp),
-//    horizontalArrangement = Arrangement.SpaceBetween,
-//    verticalAlignment = Alignment.CenterVertically
-//  ) {
-//    Text(
-//      text = "Vtpesa",
-//      color = Color(0xFF008FFF),
-//      fontSize = 26.sp,
-//      fontWeight = FontWeight.Bold
-//    )
-
-//    Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-//      Icon(Icons.Default.Home, contentDescription = "Home")
-//      Icon(Icons.Default.Check, contentDescription = "Withdraw")
-//      Icon(Icons.Default.Send, contentDescription = "Send")
-//      Icon(Icons.Default.AccountBox, contentDescription = "Wallet")
-//      Icon(Icons.Default.Notifications, contentDescription = "Alerts")
-//    }
-
-//    Box(
-//      modifier = Modifier
-//        .size(40.dp)
-//        .background(Color.Gray, shape = CircleShape)
-//    )
-//  }
-//}
-
 data class Transaction(val date: String, val name: String, val amount: Double)
 
 @Preview(showBackground = true)
 @Composable
-fun preview(){
+fun Preview(){
   WalletPage()
 }

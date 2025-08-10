@@ -2,7 +2,6 @@ package com.example.vovotapesa.ui.app.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.CheckboxDefaults.colors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,7 +35,6 @@ import com.example.vovotapesa.ui.app.components.NormalTextComponent
 import com.example.vovotapesa.ui.app.navigation.MyPageNavigation
 import com.example.vovotapesa.R
 import com.example.vovotapesa.ui.app.navigation.PageRooter
-import com.example.vovotapesa.ui.app.navigation.Rooter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,7 +90,6 @@ fun HomeScreen(onProfileClick: () -> Unit ){
         ) {
           val navItems = listOf(
             Triple(PageRooter.Wallet().name, R.drawable.card, "Wallet"),
-            Triple(PageRooter.Withdraw().name, R.drawable.withdrow, "Withdraw"),
             Triple(PageRooter.Send().name, R.drawable.send, "Send"),
             Triple(PageRooter.Alerts().name, R.drawable.alert, "Alerts")
           )

@@ -21,7 +21,6 @@ fun SendPage(){
       .padding(16.dp),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
-//    Header()
 
     Spacer(modifier = Modifier.height(24.dp))
 

@@ -1,8 +1,7 @@
 package com.example.vovotapesa.data.model
 
-data class User(
-  val name: String
-)
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 data class Country(
   val name: String,
@@ -15,3 +14,7 @@ data class Identity(
   val num: Int
 )
 
+data class Document(
+  val label: String,
+  val name: String
+)

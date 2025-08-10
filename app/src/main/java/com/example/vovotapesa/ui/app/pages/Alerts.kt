@@ -47,7 +47,7 @@ fun AlertsPage(){
           modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = if (isLight) 0.6f else 1.0f))
+          colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
         ) {
           Text(
             text = msg,

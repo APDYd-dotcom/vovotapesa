@@ -59,29 +59,33 @@ dependencies {
 
   //custom dependencies
   // Coroutines & Serialization
-  implementation(libs.kotlinx.coroutines.core)
-  implementation(libs.kotlinx.coroutines.android)
-  implementation(libs.kotlinx.serialization.json)
+  implementation("com.google.accompanist:accompanist-flowlayout:0.34.0")
+
+  // Coroutines & Serialization
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+  implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 
   // Ktor
-  implementation(libs.ktor.client.core)
-  implementation(libs.ktor.client.cio)
-  implementation(libs.ktor.client.content.negotiation)
-  implementation(libs.ktor.serialization.kotlinx.json)
-  implementation(libs.ktor.client.auth)
+  implementation("io.ktor:ktor-client-core:2.3.5")
+  implementation("io.ktor:ktor-client-cio:2.3.5")
+  implementation("io.ktor:ktor-client-content-negotiation:2.3.5")
+  implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.5")  //implementation("com.github.bumptech.glide:glide:4.15.1")
+
+  implementation("io.ktor:ktor-client-auth:2.3.5")
 
   //dataStore
-  implementation(libs.androidx.datastore.preferences)
+  implementation("androidx.datastore:datastore-preferences:1.0.0")
   //coi for images
-  implementation(libs.coil.compose)
+  implementation("io.coil-kt:coil-compose:2.4.0")
   // Navigation
-  implementation(libs.androidx.navigation.compose)
+  implementation("androidx.navigation:navigation-compose:2.6.0")
   //viewmodel
-  implementation(libs.androidx.lifecycle.viewmodel.compose)
+  implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
   //Hilt
-  implementation(libs.hilt.android)
-  kapt(libs.hilt.compiler)
-  implementation(libs.androidx.hilt.navigation.compose)
+  implementation("com.google.dagger:hilt-android:2.50")
+  kapt("com.google.dagger:hilt-compiler:2.50")
+  implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
   //splash theme
   implementation(libs.androidx.core.splashscreen)
 

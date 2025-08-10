@@ -1,18 +1,18 @@
 package com.example.vovotapesa.ui.app.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.vovotapesa.ui.app.pages.AlertsPage
-import com.example.vovotapesa.ui.app.pages.HomePage
 import com.example.vovotapesa.ui.app.pages.SendPage
 import com.example.vovotapesa.ui.app.pages.WalletPage
-import com.example.vovotapesa.ui.app.pages.WithdrawPage
 import com.example.vovotapesa.ui.app.screens.HomeScreen
 import com.example.vovotapesa.ui.app.screens.LoginScreen
 import com.example.vovotapesa.ui.app.screens.ProfileScreen
 import com.example.vovotapesa.ui.app.screens.SignUpScreen
+import com.example.vovotapesa.viewmodel.AuthViewModel
 
 
 sealed class Rooter{
@@ -23,15 +23,16 @@ sealed class Rooter{
 }
 
 sealed class PageRooter{
-  data class Home(val name: String="home"): PageRooter()
-  data class Withdraw(val name: String="withdraw"): PageRooter()
   data class Send(val name: String="send"): PageRooter()
   data class Wallet(val name: String="wallet"): PageRooter()
   data class Alerts(val name: String="alerts"): PageRooter()
 }
 
 @Composable
-fun MyNavigation(navHostController: NavHostController){
+fun MyNavigation(
+  navHostController: NavHostController,
+  authViewModel: AuthViewModel = hiltViewModel()
+){
   NavHost(
     navController = navHostController,
     startDestination = Rooter.Login().name
@@ -39,11 +40,13 @@ fun MyNavigation(navHostController: NavHostController){
     composable(route = Rooter.Login().name) {
       LoginScreen(
         onLoginClick ={navHostController.navigate(Rooter.Home().name)},
-        onSignupClick = {navHostController.navigate(Rooter.SignUp().name)}
+        onSignupClick = {navHostController.navigate(Rooter.SignUp().name)},
+        authViewModel = authViewModel
       )
     }
     composable(route = Rooter.SignUp().name) {
       SignUpScreen(
+        authViewModel = authViewModel,
         onLoginClick = {navHostController.navigate(Rooter.Login().name)}
       )
     }
@@ -53,7 +56,11 @@ fun MyNavigation(navHostController: NavHostController){
       )
     }
     composable(route = Rooter.Profile().name) {
-      ProfileScreen()
+      ProfileScreen(
+        onLogoutClick = { navHostController.navigate(Rooter.Login().name)},
+        authViewModel = authViewModel,
+        navController = navHostController
+      )
     }
   }
 }
@@ -65,17 +72,11 @@ fun MyPageNavigation(navHostController: NavHostController){
     navController = navHostController,
     startDestination = PageRooter.Wallet().name
   ){
-    composable(route= PageRooter.Home().name) {
-      HomePage()
-    }
     composable(route= PageRooter.Wallet().name) {
       WalletPage()
     }
     composable(route= PageRooter.Send().name) {
       SendPage()
-    }
-    composable(route= PageRooter.Withdraw().name) {
-      WithdrawPage()
     }
     composable(route= PageRooter.Alerts().name) {
       AlertsPage()

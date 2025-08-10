@@ -10,14 +10,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
+import androidx.compose.runtime.getValue
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -25,22 +33,33 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import com.example.vovotapesa.R
+import com.example.vovotapesa.data.remote.dto.AuthLogin
+import com.example.vovotapesa.ui.UiState
 import com.example.vovotapesa.ui.app.components.HeaderTextComponent
 import com.example.vovotapesa.ui.app.components.MediumTextComponent
 import com.example.vovotapesa.ui.app.components.MyPasswordTextField
 import com.example.vovotapesa.ui.app.components.MyTextFieldComponent
 import com.example.vovotapesa.ui.app.components.NormalTextComponent
+import com.example.vovotapesa.ui.app.navigation.Rooter
+import com.example.vovotapesa.viewmodel.AuthViewModel
 
 @Composable
-fun LoginScreen(onLoginClick:()-> Unit, onSignupClick:()-> Unit){
+fun LoginScreen(
+    onLoginClick:()-> Unit,
+    onSignupClick:()-> Unit,
+    authViewModel: AuthViewModel
+){
+  val loginUiState by authViewModel.loginUiState.collectAsState()
   val ( email, setEmail) = rememberSaveable { mutableStateOf("") }
   val ( password, setPassword) = rememberSaveable { mutableStateOf("") }
-
+  val navController = rememberNavController()
   Scaffold { innerppading ->
     Column(
       modifier = Modifier.fillMaxSize()
         .padding(innerppading)
+        .verticalScroll(rememberScrollState())
         .padding(16.dp),
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -83,9 +102,22 @@ fun LoginScreen(onLoginClick:()-> Unit, onSignupClick:()-> Unit){
       Button(
         modifier = Modifier.fillMaxWidth()
           .height(height = 45.dp),
-        onClick = onLoginClick
+        onClick = { authViewModel.login(AuthLogin(email,password)) }
+       // onClick = onLoginClick
       ) {
         MediumTextComponent(value = "Login", Color.White)
+      }
+
+      //ui state
+      when (loginUiState) {
+        is UiState.Loading -> CircularProgressIndicator()
+        is UiState.Success<*> -> {
+          LaunchedEffect(Unit) { onLoginClick() }
+        }
+        is UiState.Error -> {
+          SelectionContainer { Text((loginUiState as UiState.Error).sapor, color = Color.Red) }
+        }
+        else -> {}
       }
       Column(
         modifier = Modifier.fillMaxSize(),
@@ -100,7 +132,7 @@ fun LoginScreen(onLoginClick:()-> Unit, onSignupClick:()-> Unit){
           TextButton(
             onClick = onSignupClick
           ) {
-            NormalTextComponent(value = "Create an account now.", color = MaterialTheme.colorScheme.primary)
+            NormalTextComponent(value = "SignUp now.", color = MaterialTheme.colorScheme.primary)
           }
         }
         Spacer(modifier = Modifier.height(height = 32.dp))
