@@ -1,7 +1,6 @@
 package com.example.vovotapesa.ui.app.pages
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,6 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,20 +18,52 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.vovotapesa.ui.app.components.MediumTextComponent
 import com.example.vovotapesa.ui.app.components.NormalTextComponent
 import com.example.vovotapesa.R
+import androidx.compose.runtime.getValue
+import com.example.vovotapesa.ui.UiState
+import com.example.vovotapesa.viewmodel.AuthViewModel
+import com.example.vovotapesa.viewmodel.WalletViewModel
 
 @Composable
-fun WalletPage() {
-  
-  val balance = 12.76
-  val agentCode = "10004"
+fun WalletPage(
+  walletViewModel: WalletViewModel,
+  authViewModel: AuthViewModel
+) {
+
+  val token by authViewModel.accessToken.collectAsState()
+  val walletUiState by walletViewModel.walletUiState.collectAsState()
+
+
+  LaunchedEffect(token) {
+    token?.let {
+      walletViewModel.loadWallet(it)
+      walletViewModel.loadWallet(token.toString())
+    }
+  }
+
+  when (walletUiState) {
+    is UiState.Loading -> CircularProgressIndicator()
+    is UiState.Success -> { WalletUi(walletViewModel) }
+    is UiState.Error -> Text("Check Connection ${walletUiState.toString()} ")
+    else -> {}
+  }
+
+
+}
+
+@Composable
+fun WalletUi(walletViewModel: WalletViewModel) {
+
+  val wallet = walletViewModel.wallet.collectAsState()
+
+  val balance = wallet.value?.balance ?:"0.00"
+  val account_number = wallet.value?.user?.account ?:"0.00"
+
   val transactions = remember {
     listOf(Transaction("2024-12-27", "Nikezwe Marie Prisca", 1.0))
   }
-
   Column(
     modifier = Modifier
       .fillMaxSize()
@@ -55,8 +88,14 @@ fun WalletPage() {
         modifier = Modifier.padding(16.dp).fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
       ) {
-        MediumTextComponent("Balance\n$balance Units", color = MaterialTheme.colorScheme.onBackground)
-        MediumTextComponent("Account number\n$agentCode", color = MaterialTheme.colorScheme.onBackground)
+        MediumTextComponent(
+          "Balance\n$balance $",
+          color = MaterialTheme.colorScheme.onBackground
+        )
+        MediumTextComponent(
+          "Account number\n$account_number",
+          color = MaterialTheme.colorScheme.onBackground
+        )
       }
     }
 
@@ -74,15 +113,15 @@ fun WalletPage() {
         )
         Text("Received", color = Color(0xFF007BFF))
       }
-     Row {
-       Icon(
-         painter = painterResource(id = R.drawable.arow_send),
-         contentDescription = "received",
-         modifier = Modifier.size(25.dp)
-       )
-       Text("Sent", color = Color(0xFF007BFF))
-     }
-      Row{
+      Row {
+        Icon(
+          painter = painterResource(id = R.drawable.arow_send),
+          contentDescription = "received",
+          modifier = Modifier.size(25.dp)
+        )
+        Text("Sent", color = Color(0xFF007BFF))
+      }
+      Row {
         Icon(
           painter = painterResource(id = R.drawable.search),
           contentDescription = "received",
@@ -122,9 +161,9 @@ fun WalletPage() {
                 .padding(vertical = 4.dp),
               horizontalArrangement = Arrangement.SpaceBetween
             ) {
-              NormalTextComponent(txn.date, color= MaterialTheme.colorScheme.onBackground)
-              NormalTextComponent(txn.name, color= MaterialTheme.colorScheme.onBackground)
-              NormalTextComponent("${txn.amount} $", color= MaterialTheme.colorScheme.primary)
+              NormalTextComponent(txn.date, color = MaterialTheme.colorScheme.onBackground)
+              NormalTextComponent(txn.name, color = MaterialTheme.colorScheme.onBackground)
+              NormalTextComponent("${txn.amount} $", color = MaterialTheme.colorScheme.primary)
             }
           }
         }
@@ -132,11 +171,4 @@ fun WalletPage() {
     }
   }
 }
-
 data class Transaction(val date: String, val name: String, val amount: Double)
-
-@Preview(showBackground = true)
-@Composable
-fun Preview(){
-  WalletPage()
-}

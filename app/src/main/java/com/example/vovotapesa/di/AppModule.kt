@@ -9,6 +9,10 @@ import com.example.vovotapesa.data.TokenManager
 import com.example.vovotapesa.data.remote.ApiService
 import com.example.vovotapesa.data.repo.AuthRepo
 import com.example.vovotapesa.data.repo.AuthRepositoryImpl
+import com.example.vovotapesa.data.repo.ProfileRepo
+import com.example.vovotapesa.data.repo.ProfileRepoImpl
+import com.example.vovotapesa.data.repo.WalletRepo
+import com.example.vovotapesa.data.repo.WalletRepoImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -58,8 +62,12 @@ object AppModule {
     fun provideTokenManager(dataStore: DataStore<Preferences>): TokenManager {
         return TokenManager(dataStore)
     }
-//
-//    @Provides
-//    @Singleton
-///    fun provideProfile(api: ApiService): ProfileRepo = ProfileRepoImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideProfile(api: ApiService): ProfileRepo = ProfileRepoImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideWallet(api: ApiService): WalletRepo = WalletRepoImpl(api)
 }

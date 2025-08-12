@@ -93,7 +93,7 @@ class AuthViewModel @Inject constructor(
         },
         onFailure = { e ->
           Log.e("AuthViewModel", "Login failed: ${e.message}", e)
-          _loginUiState.value = UiState.Error(e.message ?: "Unknown error")
+          _loginUiState.value = UiState.Error("Check connection")
         }
       )
     }

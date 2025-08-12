@@ -4,6 +4,7 @@ import com.example.vovotapesa.data.remote.dto.AuthLogin
 import com.example.vovotapesa.data.remote.dto.AuthRegister
 import com.example.vovotapesa.data.remote.dto.AuthResponse
 import com.example.vovotapesa.data.remote.dto.ProfileResponse
+import com.example.vovotapesa.data.remote.dto.WalletResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -49,6 +50,12 @@ class ApiService(private val client: HttpClient) {
 
     suspend fun getProfile(token: String): List<ProfileResponse> {
         return client.get("$baseUrl/profile/") {
+            header(HttpHeaders.Authorization, "Bearer $token")
+        }.body()
+    }
+
+    suspend fun getWallet(token: String): List<WalletResponse> {
+        return client.get("$baseUrl/wallet/") {
             header(HttpHeaders.Authorization, "Bearer $token")
         }.body()
     }

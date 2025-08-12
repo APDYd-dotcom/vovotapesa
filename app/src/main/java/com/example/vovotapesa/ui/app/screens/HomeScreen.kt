@@ -35,10 +35,17 @@ import com.example.vovotapesa.ui.app.components.NormalTextComponent
 import com.example.vovotapesa.ui.app.navigation.MyPageNavigation
 import com.example.vovotapesa.R
 import com.example.vovotapesa.ui.app.navigation.PageRooter
+import com.example.vovotapesa.viewmodel.AuthViewModel
+import com.example.vovotapesa.viewmodel.ProfileViewModel
+import com.example.vovotapesa.viewmodel.WalletViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(onProfileClick: () -> Unit ){
+fun HomeScreen(
+  profileViewModel: ProfileViewModel,
+  walletViewModel: WalletViewModel,
+  authViewModel: AuthViewModel
+){
   val navController = rememberNavController()
   val navBackStackEntry by navController.currentBackStackEntryAsState()
   val currentRoute = navBackStackEntry?.destination?.route
@@ -64,7 +71,7 @@ fun HomeScreen(onProfileClick: () -> Unit ){
               modifier = Modifier.size(120.dp)
             )
 
-            IconButton(onClick = { onProfileClick() }) { // ✅ Functional click
+            IconButton(onClick = { navController.navigate(PageRooter.Profile().name)})  { // ✅ Functional click
               Image(
                 painter = painterResource(id = R.drawable.user),
                 contentDescription = "Profile",
@@ -140,7 +147,12 @@ fun HomeScreen(onProfileClick: () -> Unit ){
       modifier = Modifier.fillMaxSize()
         .padding(innerppading)
     ) {
-      MyPageNavigation(navController)
+      MyPageNavigation(
+        navController,
+        walletViewModel = walletViewModel,
+        authViewModel = authViewModel,
+        profileViewModel = profileViewModel,
+      )
     }
   }
 }
