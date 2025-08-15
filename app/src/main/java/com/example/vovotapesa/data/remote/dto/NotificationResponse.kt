@@ -4,8 +4,9 @@ import com.example.vovotapesa.data.model.User
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class WalletResponse(
+data class NotificationResponse(
   val id: Int,
   val user: User,
-  val balance: String? = "0.0"
+  val msg: String,
+  val date: String
 )

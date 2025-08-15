@@ -36,7 +36,9 @@ import com.example.vovotapesa.ui.app.navigation.MyPageNavigation
 import com.example.vovotapesa.R
 import com.example.vovotapesa.ui.app.navigation.PageRooter
 import com.example.vovotapesa.viewmodel.AuthViewModel
+import com.example.vovotapesa.viewmodel.NotificationViewModel
 import com.example.vovotapesa.viewmodel.ProfileViewModel
+import com.example.vovotapesa.viewmodel.TransactionViewModel
 import com.example.vovotapesa.viewmodel.WalletViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -44,7 +46,9 @@ import com.example.vovotapesa.viewmodel.WalletViewModel
 fun HomeScreen(
   profileViewModel: ProfileViewModel,
   walletViewModel: WalletViewModel,
-  authViewModel: AuthViewModel
+  authViewModel: AuthViewModel,
+  notificationViewModel: NotificationViewModel,
+  transactionViewModel: TransactionViewModel
 ){
   val navController = rememberNavController()
   val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -152,6 +156,8 @@ fun HomeScreen(
         walletViewModel = walletViewModel,
         authViewModel = authViewModel,
         profileViewModel = profileViewModel,
+        notificationViewModel = notificationViewModel,
+        transactionViewModel = transactionViewModel
       )
     }
   }

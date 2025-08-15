@@ -22,7 +22,6 @@ fun SendPage() {
     ConfirmationScreen(
       accountName = "HAKIZIMANA Pascal",
       amount = amount,
-      exchangeRate = 7.0,
       onSend = {
         // Handle PIN send logic here
       },
@@ -73,7 +72,6 @@ fun SendPage() {
 fun ConfirmationScreen(
   accountName: String,
   amount: String,
-  exchangeRate: Double,
   onSend: (String) -> Unit,
   onBack: () -> Unit
 ) {
@@ -88,8 +86,8 @@ fun ConfirmationScreen(
     Text("Confirm transaction", fontSize = 20.sp, fontWeight = FontWeight.Bold)
     Spacer(modifier = Modifier.height(16.dp))
 
-    Text("You are about to withdraw $amount Units from $accountName.")
-    Text("The exchange rate is $exchangeRate%.")
+    Text("You are about to withdraw $amount $ from $accountName.")
+//
 
     Spacer(modifier = Modifier.height(16.dp))
     OutlinedTextField(

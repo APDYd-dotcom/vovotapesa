@@ -9,8 +9,12 @@ import com.example.vovotapesa.data.TokenManager
 import com.example.vovotapesa.data.remote.ApiService
 import com.example.vovotapesa.data.repo.AuthRepo
 import com.example.vovotapesa.data.repo.AuthRepositoryImpl
+import com.example.vovotapesa.data.repo.NotificationRepo
+import com.example.vovotapesa.data.repo.NotificationRepoImpl
 import com.example.vovotapesa.data.repo.ProfileRepo
 import com.example.vovotapesa.data.repo.ProfileRepoImpl
+import com.example.vovotapesa.data.repo.TransactionRepo
+import com.example.vovotapesa.data.repo.TransactionRepoImpl
 import com.example.vovotapesa.data.repo.WalletRepo
 import com.example.vovotapesa.data.repo.WalletRepoImpl
 import dagger.Module
@@ -70,4 +74,12 @@ object AppModule {
     @Provides
     @Singleton
     fun provideWallet(api: ApiService): WalletRepo = WalletRepoImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideNotification(api: ApiService): NotificationRepo = NotificationRepoImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideTransaction(api: ApiService): TransactionRepo = TransactionRepoImpl(api)
 }

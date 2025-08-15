@@ -13,7 +13,9 @@ import com.example.vovotapesa.ui.app.screens.LoginScreen
 import com.example.vovotapesa.ui.app.pages.ProfileScreen
 import com.example.vovotapesa.ui.app.screens.SignUpScreen
 import com.example.vovotapesa.viewmodel.AuthViewModel
+import com.example.vovotapesa.viewmodel.NotificationViewModel
 import com.example.vovotapesa.viewmodel.ProfileViewModel
+import com.example.vovotapesa.viewmodel.TransactionViewModel
 import com.example.vovotapesa.viewmodel.WalletViewModel
 
 
@@ -35,7 +37,9 @@ fun MyNavigation(
   navHostController: NavHostController,
   authViewModel: AuthViewModel = hiltViewModel(),
   walletViewModel: WalletViewModel = hiltViewModel(),
-  profileViewModel: ProfileViewModel = hiltViewModel()
+  profileViewModel: ProfileViewModel = hiltViewModel(),
+  notificationViewModel: NotificationViewModel = hiltViewModel(),
+  transactionViewModel: TransactionViewModel = hiltViewModel()
 ){
 
 
@@ -60,7 +64,9 @@ fun MyNavigation(
       HomeScreen(
         authViewModel = authViewModel,
         walletViewModel = walletViewModel,
-        profileViewModel = profileViewModel
+        profileViewModel = profileViewModel,
+        notificationViewModel = notificationViewModel,
+        transactionViewModel = transactionViewModel
       )
     }
   }
@@ -72,7 +78,9 @@ fun MyPageNavigation(
   navHostController: NavHostController,
   authViewModel: AuthViewModel,
   profileViewModel: ProfileViewModel,
-  walletViewModel: WalletViewModel
+  walletViewModel: WalletViewModel,
+  notificationViewModel: NotificationViewModel,
+  transactionViewModel: TransactionViewModel
 ){
   NavHost(
     navController = navHostController,
@@ -81,14 +89,18 @@ fun MyPageNavigation(
     composable(route= PageRooter.Wallet().name) {
       WalletPage(
         walletViewModel = walletViewModel,
-        authViewModel = authViewModel
+        authViewModel = authViewModel,
+        transactionViewModel = transactionViewModel
       )
     }
     composable(route= PageRooter.Send().name) {
       SendPage()
     }
     composable(route= PageRooter.Alerts().name) {
-      AlertsPage()
+      AlertsPage(
+        notificationViewModel = notificationViewModel,
+        authViewModel = authViewModel
+      )
     }
     composable(route = PageRooter.Profile().name) {
       ProfileScreen(

@@ -57,6 +57,9 @@ dependencies {
   debugImplementation(libs.androidx.ui.tooling)
   debugImplementation(libs.androidx.ui.test.manifest)
 
+  //accompanist compose
+  implementation(libs.accompanist.placeholder.material)
+
   //custom dependencies
   // Coroutines & Serialization
   implementation("com.google.accompanist:accompanist-flowlayout:0.34.0")
