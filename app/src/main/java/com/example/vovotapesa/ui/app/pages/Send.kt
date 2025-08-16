@@ -1,33 +1,69 @@
 package com.example.vovotapesa.ui.app.pages
 
-import androidx.compose.runtime.Composable
-import androidx.compose.foundation.layout.*
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.serialization.builtins.ArraySerializer
+import com.example.vovotapesa.ui.UiState
+import com.example.vovotapesa.viewmodel.AuthViewModel
+import com.example.vovotapesa.viewmodel.TransactionViewModel
 
 @Composable
-fun SendPage() {
+fun SendPage(
+  transactionViewModel: TransactionViewModel,
+  authViewModel: AuthViewModel
+) {
   var accountNumber by remember { mutableStateOf("") }
   var amount by remember { mutableStateOf("") }
+  var receiverName by remember { mutableStateOf("") }
   var showConfirmation by remember { mutableStateOf(false) }
+
+  val token by authViewModel.accessToken.collectAsState()
+  val uiState by transactionViewModel.transactionUiState.collectAsState()
+
+  // Optional: show loading indicator or error message
+  if (uiState is UiState.Loading) {
+    // show a simple loading text or spinner
+    Text("Loading...", modifier = Modifier.padding(16.dp))
+  }
+
+  if (uiState is UiState.Error) {
+    Text(
+      text = (uiState as UiState.Error).sapor,
+      color = androidx.compose.ui.graphics.Color.Red,
+      modifier = Modifier.padding(16.dp)
+    )
+    Log.e("Transaction error","Detail: ${(uiState as UiState.Error).sapor}")
+  }
 
   if (showConfirmation) {
     ConfirmationScreen(
-      accountName = "HAKIZIMANA Pascal",
+      accountName = receiverName,
       amount = amount,
-      onSend = {
-        // Handle PIN send logic here
+      onSend = { pin ->
+        transactionViewModel.confirmTransaction(token.toString(), accountNumber, amount, pin)
       },
-      onBack = {
-        showConfirmation = false
-      }
+      onBack = { showConfirmation = false }
     )
   } else {
     Column(
@@ -57,7 +93,10 @@ fun SendPage() {
       Button(
         onClick = {
           if (accountNumber.isNotBlank() && amount.isNotBlank()) {
-            showConfirmation = true
+            transactionViewModel.verifyTransaction(token.toString(), accountNumber, amount) { name ->
+              receiverName = name
+              showConfirmation = true
+            }
           }
         },
         modifier = Modifier.align(Alignment.Start).padding(top = 12.dp)
@@ -67,6 +106,7 @@ fun SendPage() {
     }
   }
 }
+
 
 @Composable
 fun ConfirmationScreen(
@@ -87,9 +127,8 @@ fun ConfirmationScreen(
     Spacer(modifier = Modifier.height(16.dp))
 
     Text("You are about to withdraw $amount $ from $accountName.")
-//
-
     Spacer(modifier = Modifier.height(16.dp))
+
     OutlinedTextField(
       value = pin,
       onValueChange = { pin = it },
@@ -97,21 +136,19 @@ fun ConfirmationScreen(
       modifier = Modifier.fillMaxWidth()
     )
     Spacer(modifier = Modifier.height(16.dp))
+
     Row(
       modifier = Modifier.fillMaxWidth(),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.Center
-    ){
-
+    ) {
       TextButton(onClick = onBack) {
         Text("Back")
       }
-      Spacer(modifier = Modifier.weight(weight = 0.3f))
-
+      Spacer(modifier = Modifier.weight(0.3f))
       Button(onClick = { onSend(pin) }) {
         Text("Send")
       }
     }
-
   }
 }

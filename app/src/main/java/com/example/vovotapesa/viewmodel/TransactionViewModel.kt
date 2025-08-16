@@ -3,7 +3,9 @@ package com.example.vovotapesa.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.vovotapesa.data.remote.dto.ConfirmTransactionRequest
 import com.example.vovotapesa.data.remote.dto.TransactionResponse
+import com.example.vovotapesa.data.remote.dto.VerifyTransactionRequest
 import com.example.vovotapesa.data.repo.TransactionRepo
 import com.example.vovotapesa.ui.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,4 +41,36 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
       )
     }
   }
+
+  fun verifyTransaction(token: String, account: String, amount: String, onVerified: (String) -> Unit) {
+    viewModelScope.launch {
+      repo.verifyTransaction(token, VerifyTransactionRequest(account, amount)).fold(
+        onSuccess = { response ->
+          if (response.isValid) {
+            onVerified(response.receiverName)
+          } else {
+            _transactionUiState.value = UiState.Error("Invalid account or insufficient balance")
+          }
+        },
+        onFailure = { e ->
+          _transactionUiState.value = UiState.Error(e.message ?: "Verification failed")
+        }
+      )
+    }
+  }
+
+  fun confirmTransaction(token: String, account: String, amount: String, pin: String) {
+    viewModelScope.launch {
+      repo.confirmTransaction(token, ConfirmTransactionRequest(account, amount, pin)).fold(
+        onSuccess = { transaction ->
+          _transactions.value = _transactions.value + transaction
+          _transactionUiState.value = UiState.Success(listOf(transaction))
+        },
+        onFailure = { e ->
+          _transactionUiState.value = UiState.Error(e.message ?: "Confirmation failed")
+        }
+      )
+    }
+  }
+
 }

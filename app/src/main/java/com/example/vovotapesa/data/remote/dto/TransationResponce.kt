@@ -13,5 +13,6 @@ data class TransactionResponse(
   @SerialName("receiver_name") val receiverName: String,
   val amount: String,
   val reference: String,
-  @SerialName("sent_at") val sentAt : String
+  @SerialName("sent_at") val sentAt : String,
+  // val isValid: Boolean
 )

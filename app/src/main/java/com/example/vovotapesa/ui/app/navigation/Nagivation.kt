@@ -94,7 +94,10 @@ fun MyPageNavigation(
       )
     }
     composable(route= PageRooter.Send().name) {
-      SendPage()
+      SendPage(
+        transactionViewModel = transactionViewModel,
+        authViewModel = authViewModel
+      )
     }
     composable(route= PageRooter.Alerts().name) {
       AlertsPage(

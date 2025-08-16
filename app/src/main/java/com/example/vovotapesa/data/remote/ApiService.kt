@@ -3,9 +3,12 @@ package com.example.vovotapesa.data.remote
 import com.example.vovotapesa.data.remote.dto.AuthLogin
 import com.example.vovotapesa.data.remote.dto.AuthRegister
 import com.example.vovotapesa.data.remote.dto.AuthResponse
+import com.example.vovotapesa.data.remote.dto.ConfirmTransactionRequest
 import com.example.vovotapesa.data.remote.dto.NotificationResponse
 import com.example.vovotapesa.data.remote.dto.ProfileResponse
 import com.example.vovotapesa.data.remote.dto.TransactionResponse
+import com.example.vovotapesa.data.remote.dto.VerifyTransactionRequest
+import com.example.vovotapesa.data.remote.dto.VerifyTransactionResponse
 import com.example.vovotapesa.data.remote.dto.WalletResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -72,5 +75,21 @@ class ApiService(private val client: HttpClient) {
         return client.get("$baseUrl/transaction/"){
             header(HttpHeaders.Authorization, "Bearer $token")
         }.body()
-    }companion object
+    }
+
+     suspend fun verifyTransaction(token: String, request: VerifyTransactionRequest): VerifyTransactionResponse {
+        return client.post("$baseUrl/transaction/") {
+            header(HttpHeaders.Authorization, "Bearer $token")
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.body()
+    }
+
+    suspend fun confirmTransaction(token: String, request: ConfirmTransactionRequest): TransactionResponse {
+        return client.post("$baseUrl/transaction/") {
+            header(HttpHeaders.Authorization, "Bearer $token")
+            contentType(ContentType.Application.Json)
+            setBody(request)
+        }.body()
+    }
 }
