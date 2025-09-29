@@ -18,7 +18,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.*
 
 class ApiService(private val client: HttpClient) {
-    val baseUrl = "https://pesa.vovota.bi/api"
+    val baseUrl = "https://pesa.clubtechlac.bi/api"
 
 //    suspend fun register(request: AuthRegister) {
 //        val response: HttpResponse = client.post("$baseUrl/user/") {
