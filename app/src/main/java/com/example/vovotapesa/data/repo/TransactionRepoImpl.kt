@@ -2,6 +2,7 @@ package com.example.vovotapesa.data.repo
 
 import com.example.vovotapesa.data.remote.ApiService
 import com.example.vovotapesa.data.remote.dto.ConfirmTransactionRequest
+import com.example.vovotapesa.data.remote.dto.ConfirmTransactionResponse
 import com.example.vovotapesa.data.remote.dto.TransactionResponse
 import com.example.vovotapesa.data.remote.dto.VerifyTransactionRequest
 import com.example.vovotapesa.data.remote.dto.VerifyTransactionResponse
@@ -25,7 +26,10 @@ class TransactionRepoImpl(private val api: ApiService) : TransactionRepo {
     }
   }
 
-  override suspend fun confirmTransaction(token: String, request: ConfirmTransactionRequest): Result<TransactionResponse> {
+  override suspend fun confirmTransaction(
+    token: String,
+    request: ConfirmTransactionRequest
+  ): Result<ConfirmTransactionResponse> {
     return try {
       val response = api.confirmTransaction(token, request)
       Result.success(response)
@@ -33,7 +37,6 @@ class TransactionRepoImpl(private val api: ApiService) : TransactionRepo {
       Result.failure(e)
     }
   }
-
 }
 
 

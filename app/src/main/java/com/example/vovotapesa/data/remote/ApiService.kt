@@ -4,6 +4,7 @@ import com.example.vovotapesa.data.remote.dto.AuthLogin
 import com.example.vovotapesa.data.remote.dto.AuthRegister
 import com.example.vovotapesa.data.remote.dto.AuthResponse
 import com.example.vovotapesa.data.remote.dto.ConfirmTransactionRequest
+import com.example.vovotapesa.data.remote.dto.ConfirmTransactionResponse
 import com.example.vovotapesa.data.remote.dto.NotificationResponse
 import com.example.vovotapesa.data.remote.dto.ProfileResponse
 import com.example.vovotapesa.data.remote.dto.TransactionResponse
@@ -78,18 +79,22 @@ class ApiService(private val client: HttpClient) {
     }
 
      suspend fun verifyTransaction(token: String, request: VerifyTransactionRequest): VerifyTransactionResponse {
-        return client.post("$baseUrl/transaction/") {
+        return client.post("$baseUrl/send/") {
             header(HttpHeaders.Authorization, "Bearer $token")
             contentType(ContentType.Application.Json)
             setBody(request)
         }.body()
     }
 
-    suspend fun confirmTransaction(token: String, request: ConfirmTransactionRequest): TransactionResponse {
-        return client.post("$baseUrl/transaction/") {
+    suspend fun confirmTransaction(
+        token: String,
+        request: ConfirmTransactionRequest
+    ): ConfirmTransactionResponse {
+        return client.post("$baseUrl/confirm/") {
             header(HttpHeaders.Authorization, "Bearer $token")
             contentType(ContentType.Application.Json)
             setBody(request)
         }.body()
     }
+
 }

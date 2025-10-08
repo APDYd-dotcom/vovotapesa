@@ -22,3 +22,10 @@ data class ConfirmTransactionRequest(
   val pin: String
 )
 
+@Serializable
+data class ConfirmTransactionResponse(
+  val fanta: String?= null,
+  val sapor: String?= null
+)
+
+

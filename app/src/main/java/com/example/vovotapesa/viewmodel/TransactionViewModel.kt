@@ -1,6 +1,8 @@
 package com.example.vovotapesa.viewmodel
 
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vovotapesa.data.remote.dto.ConfirmTransactionRequest
@@ -16,8 +18,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionViewModel @Inject constructor (private val repo: TransactionRepo): ViewModel() {
-  private val _transactionUiState = MutableStateFlow<UiState<List<TransactionResponse>>>(UiState.Idle)
-  val transactionUiState: StateFlow<UiState<List<TransactionResponse>>> = _transactionUiState
+  private val _transactionUiState = MutableStateFlow<UiState<Any>>(UiState.Idle)
+  val transactionUiState: StateFlow<UiState<Any>> = _transactionUiState
+
 
   private val _transactions = MutableStateFlow<List<TransactionResponse>>(emptyList())
   val transactions = _transactions
@@ -42,6 +45,24 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
     }
   }
 
+  class TransactionViewModelModal : ViewModel() {
+
+    private val _showDialog = MutableStateFlow(false)
+    val showDialog: StateFlow<Boolean> = _showDialog
+
+    fun showTransactionDialog() {
+      _showDialog.value = true
+    }
+
+    fun hideTransactionDialog() {
+      _showDialog.value = false
+    }
+
+    // ... your confirmTransaction(), verifyTransaction(), etc.
+  }
+
+
+
   fun verifyTransaction(token: String, account: String, amount: String, onVerified: (String) -> Unit) {
     viewModelScope.launch {
       repo.verifyTransaction(token, VerifyTransactionRequest(account, amount)).fold(
@@ -62,15 +83,26 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
   fun confirmTransaction(token: String, account: String, amount: String, pin: String) {
     viewModelScope.launch {
       repo.confirmTransaction(token, ConfirmTransactionRequest(account, amount, pin)).fold(
-        onSuccess = { transaction ->
-          _transactions.value = _transactions.value + transaction
-          _transactionUiState.value = UiState.Success(listOf(transaction))
-        },
+        onSuccess = { response ->
+          when {
+            response.fanta != null -> {
+              _transactionUiState.value = UiState.Success(response.fanta)
+            }
+
+          
+          response.sapor != null -> {
+          _transactionUiState.value = UiState.Error(response.sapor)
+        } else -> {
+          _transactionUiState.value = UiState.Error( "Unknown response from server")
+        } }},
         onFailure = { e ->
           _transactionUiState.value = UiState.Error(e.message ?: "Confirmation failed")
         }
       )
+
     }
   }
 
+
 }
+
