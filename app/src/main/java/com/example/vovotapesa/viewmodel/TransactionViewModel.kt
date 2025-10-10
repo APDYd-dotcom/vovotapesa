@@ -45,6 +45,12 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
     }
   }
 
+  fun setIdle(){
+    viewModelScope.launch {
+      _transactionUiState.value = UiState.Idle
+    }
+  }
+
   class TransactionViewModelModal : ViewModel() {
 
     private val _showDialog = MutableStateFlow(false)
@@ -88,7 +94,6 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
             response.fanta != null -> {
               _transactionUiState.value = UiState.Success(response.fanta)
             }
-
           
           response.sapor != null -> {
           _transactionUiState.value = UiState.Error(response.sapor)
@@ -98,10 +103,13 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
         onFailure = { e ->
           _transactionUiState.value = UiState.Error(e.message ?: "Confirmation failed")
         }
+
       )
 
     }
   }
+
+
 
 
 }

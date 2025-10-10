@@ -133,7 +133,8 @@ fun HomeScreen(
               label = {
                 NormalTextComponent(
                   value = label,
-                  color = if (isSelected) selectedBlue else MaterialTheme.colorScheme.onBackground
+                  color = if (isSelected) selectedBlue else MaterialTheme.colorScheme.onBackground,
+                  modifier = Modifier
                 )
               },
               colors = NavigationBarItemDefaults.colors(

@@ -1,11 +1,13 @@
 package com.example.vovotapesa.ui.app.pages
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +23,8 @@ import com.example.vovotapesa.ui.app.components.MediumTextComponent
 import com.example.vovotapesa.ui.app.components.NormalTextComponent
 import com.example.vovotapesa.R
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.style.TextOverflow
 import com.example.vovotapesa.ui.UiState
 import com.example.vovotapesa.ui.app.components.utils.WalletShimmer
 import com.example.vovotapesa.viewmodel.AuthViewModel
@@ -65,8 +69,8 @@ fun WalletPage(
 fun WalletUi(walletViewModel: WalletViewModel, transactionViewModel: TransactionViewModel) {
 
   val wallet = walletViewModel.wallet.collectAsState()
-  val balance = wallet.value?.balance ?:"0.00"
-  val account_number = wallet.value?.user?.account ?:"0.00"
+  val balance = wallet.value?.balance ?: "0.00"
+  val account_number = wallet.value?.user?.account ?: "0.00"
 
 
   Column(
@@ -103,55 +107,57 @@ fun WalletUi(walletViewModel: WalletViewModel, transactionViewModel: Transaction
         )
       }
     }
+    Spacer(modifier = Modifier.height(height = 36.dp))
 
-    Row(
-      modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 18.dp)
-        .padding(horizontal = 18.dp),
-      horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-      Row(
-        verticalAlignment = Alignment.CenterVertically
-      ) {
-        Text("All ", color = Color(0xFF007BFF))
-        Icon(
-          painter = painterResource(id = R.drawable.all),
-          contentDescription = "received",
-          modifier = Modifier.size(18.dp)
-        )
-      }
-      Row {
-        Icon(
-          painter = painterResource(id = R.drawable.arow_withdrow),
-          contentDescription = "received",
-          modifier = Modifier.size(23.dp)
-        )
-        Text("Received", color = Color(0xFF007BFF))
-      }
-      Row {
-        Icon(
-          painter = painterResource(id = R.drawable.arow_send),
-          contentDescription = "received",
-          modifier = Modifier.size(23.dp)
-        )
-        Text("Sent", color = Color(0xFF007BFF))
-      }
-      Row {
-        Icon(
-          painter = painterResource(id = R.drawable.search),
-          contentDescription = "received",
-          modifier = Modifier.size(23.dp)
-        )
-        Text("Search", color = Color(0xFF007BFF))
-      }
-    }
+
+//    Row(
+//      modifier = Modifier
+//        .fillMaxWidth()
+//        .padding(vertical = 18.dp)
+//        .padding(horizontal = 18.dp),
+//      horizontalArrangement = Arrangement.SpaceBetween
+//    ) {
+//      Row(
+//        verticalAlignment = Alignment.CenterVertically
+//      ) {
+//        Text("All ", color = Color(0xFF007BFF))
+//        Icon(
+//          painter = painterResource(id = R.drawable.all),
+//          contentDescription = "received",
+//          modifier = Modifier.size(18.dp)
+//        )
+//      }
+//      Row {
+//        Icon(
+//          painter = painterResource(id = R.drawable.arow_withdrow),
+//          contentDescription = "received",
+//          modifier = Modifier.size(23.dp)
+//        )
+//        Text("Received", color = Color(0xFF007BFF))
+//      }
+//      Row {
+//        Icon(
+//          painter = painterResource(id = R.drawable.arow_send),
+//          contentDescription = "received",
+//          modifier = Modifier.size(23.dp)
+//        )
+//        Text("Sent", color = Color(0xFF007BFF))
+//      }
+//      Row {
+//        Icon(
+//          painter = painterResource(id = R.drawable.search),
+//          contentDescription = "received",
+//          modifier = Modifier.size(23.dp)
+//        )
+//        Text("Search", color = Color(0xFF007BFF))
+//      }
+//    }
 
     Card(
       modifier = Modifier
         .fillMaxWidth()
         .padding(vertical = 2.dp)
-        .padding(horizontal =  16.dp),
+        .padding(horizontal = 16.dp),
       shape = RoundedCornerShape(12.dp),
       colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
@@ -184,20 +190,41 @@ fun WalletUi(walletViewModel: WalletViewModel, transactionViewModel: Transaction
             ) {
               NormalTextComponent(
                 txn.sentAt,
-                color = MaterialTheme.colorScheme.onBackground
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier
               )
+              val isReceiver = wallet.value?.user == txn.receiver
               NormalTextComponent(
-                txn.senderName,
-                color = MaterialTheme.colorScheme.onBackground
+                if (isReceiver) {
+                  txn.senderName.truncateWithEllipsis(15)
+                } else {
+                  txn.receiverName.truncateWithEllipsis(15)
+                },
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.fillMaxWidth(0.01f).border(1.dp, Color.Blue, RectangleShape)
+              )
+              Icon(
+                painter = if (isReceiver) painterResource(R.drawable.arow_send)  else painterResource(R.drawable.arow_withdrow),
+                contentDescription = if (isReceiver) "Received" else "Sent",
+                tint = MaterialTheme.colorScheme.onBackground
               )
               NormalTextComponent(
                 "${txn.amount} $",
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
               )
             }
           }
         }
       }
     }
+  }
+}
+
+fun String.truncateWithEllipsis(maxLength: Int): String {
+  return if (this.length > maxLength) {
+    this.take(maxLength) + "..."
+  } else {
+    this
   }
 }

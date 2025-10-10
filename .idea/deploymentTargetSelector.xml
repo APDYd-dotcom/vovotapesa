@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-08-14T16:56:06.807752532Z">
+        <DropdownSelection timestamp="2025-10-09T15:03:34.156377104Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=0471635078000787" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R58R50Y8J3V" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -20,7 +20,7 @@
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=/home/apdy/.config/.android/avd/Pixel_4a.avd" />
+                <DeviceId pluginId="PhysicalDevice" identifier="serial=144131557H006622" />
               </handle>
             </Target>
           </targets>

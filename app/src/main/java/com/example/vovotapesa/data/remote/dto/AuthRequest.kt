@@ -21,6 +21,6 @@ data class AuthRegister(
 
 @Serializable
 data class AuthLogin(
-    val email: String,
+    val phone: String,
     val password: String
 )

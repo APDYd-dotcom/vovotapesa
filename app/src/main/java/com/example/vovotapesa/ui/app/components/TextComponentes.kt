@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.vovotapesa.ui.theme.FontSizes.body
 import com.example.vovotapesa.ui.theme.FontSizes.caption
@@ -16,14 +17,16 @@ import java.nio.file.WatchEvent
 
 /*  Normal Text Component*/
 @Composable
-fun NormalTextComponent(value: String,color: Color){
+fun NormalTextComponent(value: String,color: Color, modifier: Modifier){
   Text(
     modifier = Modifier,
     text = value,
     color = color,
     fontSize = caption(),
     fontWeight = FontWeight.Normal,
-    fontFamily = FontFamily.Default
+    fontFamily = FontFamily.Default,
+    maxLines = 1,
+    overflow = TextOverflow.Ellipsis
   )
 }
 

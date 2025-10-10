@@ -5,7 +5,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-//import com.example.vovotapesa.ui.app.components.GlobalTransactionDialog
 import com.example.vovotapesa.ui.app.pages.AlertsPage
 import com.example.vovotapesa.ui.app.pages.SendPage
 import com.example.vovotapesa.ui.app.pages.WalletPage
@@ -114,7 +113,6 @@ fun MyPageNavigation(
         authViewModel = authViewModel,
         profileViewModel = profileViewModel
       )
-   //   GlobalTransactionDialog(transactionViewModel, navHostController)
     }
   }
 

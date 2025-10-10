@@ -29,20 +29,9 @@ fun SendPage(
   val token by authViewModel.accessToken.collectAsState()
   val uiState by transactionViewModel.transactionUiState.collectAsState()
 
-  // Show loading
-  if (uiState is UiState.Loading) {
-    Text("Loading...", modifier = Modifier.padding(16.dp))
-  }
 
-  // Show error
-  if (uiState is UiState.Error) {
-    Text(
-      text = (uiState as UiState.Error).sapor,
-      color = Color.Red,
-      modifier = Modifier.padding(16.dp)
-    )
-    Log.e("Transaction error", "Detail: ${(uiState as UiState.Error).sapor}")
-  }
+
+
 
   if (showConfirmation) {
     ConfirmationScreen(
@@ -52,7 +41,8 @@ fun SendPage(
         transactionViewModel.confirmTransaction(token.toString(), accountNumber, amount, pin)
       },
       onBack = { showConfirmation = false },
-      navController = navController
+      navController = navController,
+      transactionViewModel = transactionViewModel
     )
   } else {
     Column(
@@ -82,6 +72,17 @@ fun SendPage(
           .fillMaxWidth()
           .padding(vertical = 8.dp)
       )
+      when ( uiState) {
+        is UiState.Loading ->   Text("Loading...", modifier = Modifier.padding(16.dp))
+        is UiState.Error -> { Text(
+              text =  "Invalid account or insufficient balance",
+              color = Color.Red,
+              modifier = Modifier.padding(16.dp)
+            )
+            Log.e("Transaction error", "Detail: ${(uiState as UiState.Error).sapor}")
+          }
+        else -> {}
+      }
 
       Button(
         onClick = {
@@ -91,6 +92,7 @@ fun SendPage(
               showConfirmation = true
             }
           }
+          transactionViewModel.setIdle()
         },
         modifier = Modifier
           .align(Alignment.Start)
@@ -105,6 +107,7 @@ fun SendPage(
 @Composable
 fun ConfirmationScreen(
   accountName: String,
+  transactionViewModel: TransactionViewModel,
   amount: String,
   onSend: (String) -> Unit,
   onBack: () -> Unit,
@@ -112,19 +115,30 @@ fun ConfirmationScreen(
 ) {
   var pin by remember { mutableStateOf("") }
   var showSuccessDialog by remember { mutableStateOf(false) }
+  val uiState by transactionViewModel.transactionUiState.collectAsState()
 
   // ✅ Success Modal
   if (showSuccessDialog) {
     AlertDialog(
-      onDismissRequest = { showSuccessDialog = false },
+      onDismissRequest = {  },
       title = { Text("Transaction Sent") },
-      text = { Text("Your transaction request has been sent!") },
+      text = {
+              when (uiState ) {
+                is UiState.Loading -> Text("Loading...", modifier = Modifier.padding(16.dp))
+                is UiState.Error -> Text("Invalid PIN")
+                is UiState.Success -> Text("Your transaction request has been sent!")
+                is UiState.Idle -> Text("Loading...", modifier = Modifier.padding(16.dp))
+              }
+             },
       confirmButton = {
         Button(onClick = {
           showSuccessDialog = false
-          navController.navigate("wallet") {
-            popUpTo("send") { inclusive = true } // Clear send page from backstack
+          if (uiState is UiState.Success){
+            navController.navigate("wallet") {
+              popUpTo("send") { inclusive = true } // Clear send page from backstack
+            }
           }
+          transactionViewModel.setIdle()
         }) {
           Text("OK")
         }
@@ -164,6 +178,7 @@ fun ConfirmationScreen(
         Button(onClick = {
           onSend(pin)                // ✅ Call API
           showSuccessDialog = true   // ✅ Show modal
+
         }) {
           Text("Send")
         }

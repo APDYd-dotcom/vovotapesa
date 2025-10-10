@@ -186,11 +186,11 @@ fun SignUpScreen(
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.Center
         ) {
-          NormalTextComponent(value = "Already have an account?",color = MaterialTheme.colorScheme.onBackground)
+          NormalTextComponent(value = "Already have an account?",color = MaterialTheme.colorScheme.onBackground,  modifier = Modifier)
           TextButton(
             onClick = onLoginClick
           ) {
-            NormalTextComponent(value = "Login now.", color = MaterialTheme.colorScheme.primary)
+            NormalTextComponent(value = "Login now.", color = MaterialTheme.colorScheme.primary,  modifier = Modifier)
           }
         }
         Spacer(modifier = Modifier.height(height = 32.dp))
