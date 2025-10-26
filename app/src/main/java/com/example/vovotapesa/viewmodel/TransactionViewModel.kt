@@ -51,24 +51,6 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
     }
   }
 
-  class TransactionViewModelModal : ViewModel() {
-
-    private val _showDialog = MutableStateFlow(false)
-    val showDialog: StateFlow<Boolean> = _showDialog
-
-    fun showTransactionDialog() {
-      _showDialog.value = true
-    }
-
-    fun hideTransactionDialog() {
-      _showDialog.value = false
-    }
-
-    // ... your confirmTransaction(), verifyTransaction(), etc.
-  }
-
-
-
   fun verifyTransaction(token: String, account: String, amount: String, onVerified: (String) -> Unit) {
     viewModelScope.launch {
       repo.verifyTransaction(token, VerifyTransactionRequest(account, amount)).fold(
@@ -108,9 +90,5 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
 
     }
   }
-
-
-
-
 }
 

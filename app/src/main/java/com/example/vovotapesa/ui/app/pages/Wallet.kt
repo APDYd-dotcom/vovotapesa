@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.vovotapesa.ui.app.components.MediumTextComponent
 import com.example.vovotapesa.ui.app.components.NormalTextComponent
-import com.example.vovotapesa.R
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,6 +29,7 @@ import com.example.vovotapesa.ui.app.components.utils.WalletShimmer
 import com.example.vovotapesa.viewmodel.AuthViewModel
 import com.example.vovotapesa.viewmodel.TransactionViewModel
 import com.example.vovotapesa.viewmodel.WalletViewModel
+import com.example.vovotapesa.R
 
 @Composable
 fun WalletPage(
