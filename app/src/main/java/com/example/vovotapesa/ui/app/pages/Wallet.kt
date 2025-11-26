@@ -55,10 +55,10 @@ fun WalletPage(
     }
   }
 
-  when (walletUiState) {
-    is UiState.Loading -> { WalletShimmer() }
-    is UiState.Success -> { WalletUi(walletViewModel, transactionViewModel) }
-    is UiState.Error -> { WalletShimmer() }
+  when {
+    walletUiState.isLoading -> { WalletShimmer() }
+    walletUiState.success -> { WalletUi(walletViewModel, transactionViewModel) }
+    walletUiState.error.isNullOrEmpty() -> { WalletShimmer() }
     else -> {}
   }
 

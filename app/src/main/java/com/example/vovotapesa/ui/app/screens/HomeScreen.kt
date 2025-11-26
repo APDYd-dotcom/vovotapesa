@@ -35,6 +35,7 @@ import com.example.vovotapesa.ui.app.components.NormalTextComponent
 import com.example.vovotapesa.ui.app.navigation.MyPageNavigation
 import com.example.vovotapesa.R
 import com.example.vovotapesa.ui.app.navigation.PageRooter
+import com.example.vovotapesa.ui.app.navigation.Rooter
 import com.example.vovotapesa.viewmodel.AuthViewModel
 import com.example.vovotapesa.viewmodel.NotificationViewModel
 import com.example.vovotapesa.viewmodel.ProfileViewModel
@@ -48,7 +49,8 @@ fun HomeScreen(
   walletViewModel: WalletViewModel,
   authViewModel: AuthViewModel,
   notificationViewModel: NotificationViewModel,
-  transactionViewModel: TransactionViewModel
+  transactionViewModel: TransactionViewModel,
+  onProfileClick: () -> Unit,
 ){
   val navController = rememberNavController()
   val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -75,7 +77,7 @@ fun HomeScreen(
               modifier = Modifier.size(120.dp)
             )
 
-            IconButton(onClick = { navController.navigate(PageRooter.Profile().name)})  { // ✅ Functional click
+            IconButton(onClick = onProfileClick )  {
               Image(
                 painter = painterResource(id = R.drawable.user),
                 contentDescription = "Profile",

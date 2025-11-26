@@ -17,7 +17,7 @@ class NotificationViewModel @Inject constructor(
   private val repo: NotificationRepo
 ): ViewModel() {
 
-  private val _notificationUiState = MutableStateFlow<UiState<List<NotificationResponse>>>(UiState.Idle)
+  private val _notificationUiState = MutableStateFlow(UiState<List<NotificationResponse>>())
   val notificationUiState: StateFlow<UiState<List<NotificationResponse>>> = _notificationUiState
 
   private val _notification = MutableStateFlow<List<NotificationResponse>>(emptyList())
@@ -25,7 +25,7 @@ class NotificationViewModel @Inject constructor(
 
   fun loadNotification(token: String) {
     viewModelScope.launch {
-      _notificationUiState.value = UiState.Loading
+      _notificationUiState.value = UiState(isLoading = true)
 
       val result = repo.getNotification(token)
       Log.e("Notification VM result", "Detail: $result")
@@ -33,12 +33,12 @@ class NotificationViewModel @Inject constructor(
       result.fold(
         onSuccess = { n ->
           _notification.value = n
-          _notificationUiState.value = UiState.Success(n)
+          _notificationUiState.value = UiState(success = true)
           println("Notification: $n")
         },
         onFailure = { e ->
           Log.e("Notification VM error", "Failed to load Notification", e)
-          _notificationUiState.value = UiState.Error(e.message ?: "Unknown error")
+          _notificationUiState.value = UiState(error = e.message ?: "Unknown error")
         }
       )
     }

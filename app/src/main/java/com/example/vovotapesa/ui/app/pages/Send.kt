@@ -72,14 +72,14 @@ fun SendPage(
           .fillMaxWidth()
           .padding(vertical = 8.dp)
       )
-      when ( uiState) {
-        is UiState.Loading ->   Text("Loading...", modifier = Modifier.padding(16.dp))
-        is UiState.Error -> { Text(
+      when {
+        uiState.isLoading ->   Text("Loading...", modifier = Modifier.padding(16.dp))
+        uiState.error.isNullOrEmpty() -> { Text(
               text =  "Invalid account or insufficient balance",
               color = Color.Red,
               modifier = Modifier.padding(16.dp)
             )
-            Log.e("Transaction error", "Detail: ${(uiState as UiState.Error).sapor}")
+            Log.e("Transaction error", "Detail: ${ uiState.error}")
           }
         else -> {}
       }
@@ -123,17 +123,17 @@ fun ConfirmationScreen(
       onDismissRequest = {  },
       title = { Text("Transaction Sent") },
       text = {
-              when (uiState ) {
-                is UiState.Loading -> Text("Loading...", modifier = Modifier.padding(16.dp))
-                is UiState.Error -> Text("Invalid PIN")
-                is UiState.Success -> Text("Your transaction request has been sent!")
-                is UiState.Idle -> Text("Loading...", modifier = Modifier.padding(16.dp))
+              when {
+                uiState.isLoading -> Text("Loading...", modifier = Modifier.padding(16.dp))
+                uiState.error.isNullOrEmpty() -> Text("Invalid PIN")
+                uiState.success -> Text("Your transaction request has been sent!")
+                else -> Text("Loading...", modifier = Modifier.padding(16.dp))
               }
              },
       confirmButton = {
         Button(onClick = {
           showSuccessDialog = false
-          if (uiState is UiState.Success){
+          if (uiState.success){
             navController.navigate("wallet") {
               popUpTo("send") { inclusive = true } // Clear send page from backstack
             }
@@ -145,7 +145,7 @@ fun ConfirmationScreen(
       }
     )
   } else {
-    // ✅ Only show confirmation screen when modal is NOT open
+    // Only show confirmation screen when modal is NOT open
     Column(
       modifier = Modifier
         .fillMaxSize()
@@ -176,8 +176,8 @@ fun ConfirmationScreen(
         }
         Spacer(modifier = Modifier.weight(0.3f))
         Button(onClick = {
-          onSend(pin)                // ✅ Call API
-          showSuccessDialog = true   // ✅ Show modal
+          onSend(pin)
+          showSuccessDialog = true
 
         }) {
           Text("Send")

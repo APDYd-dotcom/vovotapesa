@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WalletViewModel @Inject constructor ( private val repo: WalletRepo): ViewModel() {
-  private val _walletUiState = MutableStateFlow<UiState<WalletResponse>>(UiState.Idle)
+  private val _walletUiState = MutableStateFlow(UiState<WalletResponse>())
   val walletUiState: StateFlow<UiState<WalletResponse>> = _walletUiState
 
   private val _wallet = MutableStateFlow<WalletResponse?>(null)
@@ -24,7 +24,7 @@ class WalletViewModel @Inject constructor ( private val repo: WalletRepo): ViewM
 
   fun loadWallet(token: String) {
     viewModelScope.launch {
-      _walletUiState.value = UiState.Loading
+      _walletUiState.value = UiState(isLoading = true)
       val result = repo.getWallet(token)
       Log.e("Wallet VM result", "Detail: $result")
 
@@ -32,12 +32,12 @@ class WalletViewModel @Inject constructor ( private val repo: WalletRepo): ViewM
         onSuccess = { w ->
           _wallet.value = w
           println("Wallet: $w")
-          _walletUiState.value = UiState.Success(w)
+          _walletUiState.value = UiState(success = true)
         },
         onFailure = { e ->
          // _error.value = e.message.toString()
           Log.e("Wallet VM error", "Failed to load Wallet", e)
-          _walletUiState.value = UiState.Error(e.message ?: "Unknown error")
+          _walletUiState.value = UiState(error = e.message ?: "Unknown error")
         }
       )
     }

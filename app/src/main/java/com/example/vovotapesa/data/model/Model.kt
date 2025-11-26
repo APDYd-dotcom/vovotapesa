@@ -1,5 +1,6 @@
 package com.example.vovotapesa.data.model
 
+import android.annotation.SuppressLint
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -33,4 +34,9 @@ data class User(
   val verifier: Boolean = false
 )
 
+@SuppressLint("UnsafeOptInUsageError")
+@Serializable
+data class PasswordChangeRequest(
+  @SerialName("new_password") val newPassword: String?
+)
 

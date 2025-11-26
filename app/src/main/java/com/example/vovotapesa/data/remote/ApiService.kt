@@ -1,10 +1,12 @@
 package com.example.vovotapesa.data.remote
 
+import com.example.vovotapesa.data.model.PasswordChangeRequest
 import com.example.vovotapesa.data.remote.dto.AuthLogin
 import com.example.vovotapesa.data.remote.dto.AuthRegister
 import com.example.vovotapesa.data.remote.dto.AuthResponse
 import com.example.vovotapesa.data.remote.dto.ConfirmTransactionRequest
 import com.example.vovotapesa.data.remote.dto.ConfirmTransactionResponse
+import com.example.vovotapesa.data.remote.dto.FantaResponse
 import com.example.vovotapesa.data.remote.dto.NotificationResponse
 import com.example.vovotapesa.data.remote.dto.ProfileResponse
 import com.example.vovotapesa.data.remote.dto.TransactionResponse
@@ -14,9 +16,12 @@ import com.example.vovotapesa.data.remote.dto.WalletResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.MultiPartFormDataContent
+import io.ktor.client.request.forms.formData
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.*
+import java.io.File
 
 class ApiService(private val client: HttpClient) {
     val baseUrl = "https://pesa.clubtechlac.bi/api"
@@ -95,6 +100,42 @@ class ApiService(private val client: HttpClient) {
             contentType(ContentType.Application.Json)
             setBody(request)
         }.body()
+    }
+
+    suspend fun updateProfile(
+        id: Int,
+        token: String,
+        email: String? = null,
+        fullName: String? = null,
+        photo: File? = null
+    ): HttpResponse {
+        return client.request("$baseUrl/profile/$id/") {
+            method = HttpMethod.Patch
+            header("Authorization", "Bearer $token")
+            setBody(
+                MultiPartFormDataContent(
+                    formData {
+                        email?.let { append("email", it) }
+                        fullName?.let { append("user.full_name", it) }
+                        photo?.let { file ->
+                            append("photo", file.readBytes(), Headers.build {
+                                append(HttpHeaders.ContentType, "image/jpeg")
+                                append(HttpHeaders.ContentDisposition, "filename=\"${file.name}\"")
+                            })
+                        }
+                    }
+                )
+            )
+        }
+    }
+
+    suspend fun changePassword(token: String, request: PasswordChangeRequest): FantaResponse {
+        val resp = client.post("$baseUrl/changepwd/") {
+            contentType(ContentType.Application.Json)
+            header(HttpHeaders.Authorization, "Bearer $token")
+            setBody(request)
+        }
+        return resp.body()
     }
 
 }

@@ -45,62 +45,51 @@ import java.util.Calendar
 
 @Composable
 fun SignUpScreen(
-  onLoginClick: ()-> Unit,
+  onLoginClick: () -> Unit,
   authViewModel: AuthViewModel
 ) {
   var currentStep by remember { mutableStateOf(1) }
   val registerUiState by authViewModel.registerUiState.collectAsState()
 
-
-    val firstname = authViewModel.firstname.collectAsState()
-    val lastname = authViewModel.lastname.collectAsState()
-    val birthDate = authViewModel.birthDate.collectAsState()
-    val country = authViewModel.country.collectAsState()
-    val document = authViewModel.document.collectAsState()
-    val numero = authViewModel.numero.collectAsState()
-    val phone = authViewModel.phone.collectAsState()
-    val pin = authViewModel.pin.collectAsState()
-    val email = authViewModel.email.collectAsState()
-    val password = authViewModel.password.collectAsState()
-    val confirmPassword = authViewModel.confirmPassword.collectAsState()
+  val firstname = authViewModel.firstname.collectAsState()
+  val lastname = authViewModel.lastname.collectAsState()
+  val birthDate = authViewModel.birthDate.collectAsState()
+  val country = authViewModel.country.collectAsState()
+  val document = authViewModel.document.collectAsState()
+  val numero = authViewModel.numero.collectAsState()
+  val phone = authViewModel.phone.collectAsState()
+  val pin = authViewModel.pin.collectAsState()
+  val email = authViewModel.email.collectAsState()
+  val password = authViewModel.password.collectAsState()
+  val confirmPassword = authViewModel.confirmPassword.collectAsState()
 
   Scaffold(
     modifier = Modifier
       .fillMaxSize()
       .padding(horizontal = 8.dp)
       .background(color = MaterialTheme.colorScheme.background)
-  ) { innerppading ->
+  ) { innerPadding ->
     Column(
       modifier = Modifier
         .padding(horizontal = 16.dp)
-        .padding(innerppading)
+        .padding(innerPadding)
         .verticalScroll(rememberScrollState()),
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
       Image(
         painter = painterResource(id = R.drawable.logo),
         contentDescription = "logo",
-        modifier = Modifier.size(size = 180.dp)
+        modifier = Modifier.size(180.dp)
       )
 
       HeaderTextComponent(value = "Register an account")
-      Spacer(modifier = Modifier.height(height = 8.dp))
+      Spacer(modifier = Modifier.height(8.dp))
+
       when (currentStep) {
-        1 -> StepOne(
-//          firstname = firstname.value.toString(),
-//          lastname = lastname.value.toString(),
-//          birthDate = birthDate.value.toString(),
-          authViewModel = authViewModel
-        )
-        2 -> StepTwo(
-          authViewModel = authViewModel,
-        )
-        3 -> StepThree(
-          authViewModel = authViewModel,
-        )
-        4 -> StepFour(
-          authViewModel = authViewModel
-        )
+        1 -> StepOne(authViewModel = authViewModel)
+        2 -> StepTwo(authViewModel = authViewModel)
+        3 -> StepThree(authViewModel = authViewModel)
+        4 -> StepFour(authViewModel = authViewModel)
       }
 
       Spacer(modifier = Modifier.height(24.dp))
@@ -120,20 +109,21 @@ fun SignUpScreen(
           }
         } else {
           Button(onClick = {
+            // Validate passwords and required fields
             if (password.value != confirmPassword.value) {
-              authViewModel.resetRegisterState(UiState.Error("Passwords do not match"))
+              authViewModel.resetRegisterState(error = Error( "Passwords do not match"))
             } else if (
-              firstname.value?.isBlank() == true ||
-              lastname.value?.isBlank() == true ||
-              birthDate.value?.isBlank() == true ||
-              country.value?.isBlank() == true ||
-              document.value?.isBlank() == true ||
-              numero.value?.isBlank() == true ||
-              phone.value?.isBlank() == true ||
-              pin.value?.isBlank() == true ||
-              email.value?.isBlank() == true
+              firstname.value.isNullOrBlank() ||
+              lastname.value.isNullOrBlank() ||
+              birthDate.value.isNullOrBlank() ||
+              country.value.isNullOrBlank() ||
+              document.value.isNullOrBlank() ||
+              numero.value.isNullOrBlank() ||
+              phone.value.isNullOrBlank() ||
+              pin.value.isNullOrBlank() ||
+              email.value.isNullOrBlank()
             ) {
-              authViewModel.resetRegisterState(UiState.Error("All fields are required"))
+              authViewModel.resetRegisterState(error = Error("All fields are required"))
             } else {
               authViewModel.register(
                 AuthRegister(
@@ -148,16 +138,9 @@ fun SignUpScreen(
                   password = password.value.toString(),
                   pin = pin.value.toString()
                 ),
-                onSuccess = {
-                  // Handle success here, e.g., show success message or navigate
-                  println("Registration successful!")
-                },
-                onError = { errorMsg ->
-                  // Handle error here, e.g., show error message
-                  println("Registration failed: $errorMsg")
-                }
+                onSuccess = { println("Registration successful!") },
+                onError = { println("Registration failed: $it") }
               )
-
             }
           }) {
             Text("Submit")
@@ -165,39 +148,48 @@ fun SignUpScreen(
         }
       }
 
+      Spacer(modifier = Modifier.height(16.dp))
+
+      // ---------------- UI State -----------------
+      when {
+        registerUiState.isLoading -> CircularProgressIndicator()
+        registerUiState.success -> {
+          Text("Registration Successful", color = Color.Green)
+        }
+        registerUiState.error != null -> {
+          SelectionContainer {
+            Text(registerUiState.error ?: "", color = Color.Red)
+          }
+        }
+      }
+
+      // Login link at bottom
       Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
       ) {
-        //ui state
-        when (registerUiState) {
-          is UiState.Loading -> CircularProgressIndicator()
-          is UiState.Success -> {
-            Text("Registration Successful", color = Color.Green)
-          }
-          is UiState.Error -> {
-            SelectionContainer { Text((registerUiState as UiState.Error).sapor, color = Color.Red) }
-          }
-          else -> {}
-        }
-
         Row(
           modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.Center
         ) {
-          NormalTextComponent(value = "Already have an account?",color = MaterialTheme.colorScheme.onBackground,  modifier = Modifier)
-          TextButton(
-            onClick = onLoginClick
-          ) {
-            NormalTextComponent(value = "Login now.", color = MaterialTheme.colorScheme.primary,  modifier = Modifier)
+          NormalTextComponent(
+            value = "Already have an account?",
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+          )
+          TextButton(onClick = onLoginClick) {
+            NormalTextComponent(
+              value = "Login now.",
+              color = MaterialTheme.colorScheme.primary,
+              modifier = Modifier
+            )
           }
         }
-        Spacer(modifier = Modifier.height(height = 32.dp))
+        Spacer(modifier = Modifier.height(32.dp))
       }
     }
   }
-
 }
 
 
@@ -398,7 +390,7 @@ fun StepTwo(
           text = { Text(text = doc.label) },
           onClick = {
             selectedDocument = doc
-            authViewModel.setDocument(doc.name) // ✅ send "PASS", not "Passport"
+            authViewModel.setDocument(doc.name) // send "PASS", not "Passport"
             expandedDoc = false
           }
         )
@@ -427,7 +419,7 @@ fun StepTwo(
     value = phoneInput.value,
     onValueChange = {
       phoneInput.value = it
-      authViewModel.setPhone(selectedCountry.pref + it) // ✅ include prefix
+      authViewModel.setPhone(selectedCountry.pref + it) // include prefix
     },
     shape = RoundedCornerShape(10.dp),
     label = { Text("Phone Number") },
@@ -463,7 +455,7 @@ fun StepThree(
     value = pinState.value,
     onValueChange = {
       pinState.value = it
-      authViewModel.setPin(it) // ✅ Save to ViewModel
+      authViewModel.setPin(it) //  Save to ViewModel
     },
     labelText = "PIN",
     leadingIcon = Icons.Default.Lock,

@@ -5,7 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -22,8 +24,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -150,4 +155,56 @@ fun DateInputField(label: String = "Select Date") {
       }
     )
   }
+}
+
+@Composable
+fun PasswordField(
+  modifier: Modifier = Modifier,
+  value: String,
+  onValueChange: (String) -> Unit,
+  label: String = "Password",
+  leading: Any,
+  imeAction: ImeAction = ImeAction.Done,
+  onImeAction: (() -> Unit)? = null,
+  enabled: Boolean = true
+) {
+  var isVisible by rememberSaveable { mutableStateOf(false) }
+  val keyBoardController = LocalSoftwareKeyboardController.current
+
+  OutlinedTextField(
+    modifier = modifier.fillMaxWidth(),
+    value = value,
+    onValueChange = onValueChange,
+    label = { Text(label) },
+    leadingIcon = { Icon(
+      painter = leading as VectorPainter,
+      contentDescription = "",
+      tint = MaterialTheme.colorScheme.primary,
+      modifier = Modifier.size(24.dp)
+    )},
+    trailingIcon = {
+      val icon = if (isVisible) R.drawable.visible else R.drawable.visibiltyof
+      val desc = if (isVisible) "Hide password" else "Show password"
+      IconButton(onClick = { isVisible = !isVisible }) {
+        Icon(
+          painter = painterResource(icon),
+          contentDescription = desc,
+          tint = MaterialTheme.colorScheme.primary,
+          modifier = Modifier.size(24.dp)
+        )
+      }
+    },
+    keyboardOptions = KeyboardOptions(
+      keyboardType = KeyboardType.Password,
+      imeAction = imeAction
+    ),
+    keyboardActions = KeyboardActions(onDone = {
+      onImeAction?.invoke()
+      keyBoardController?.hide()
+    }),
+    visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
+    shape = RoundedCornerShape(percent = 25),
+    singleLine = true,
+    enabled = enabled
+  )
 }

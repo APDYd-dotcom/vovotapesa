@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TransactionViewModel @Inject constructor (private val repo: TransactionRepo): ViewModel() {
-  private val _transactionUiState = MutableStateFlow<UiState<Any>>(UiState.Idle)
+  private val _transactionUiState = MutableStateFlow(UiState<Any>())
   val transactionUiState: StateFlow<UiState<Any>> = _transactionUiState
 
 
@@ -27,7 +27,7 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
 
   fun loadTransaction(token: String) {
     viewModelScope.launch {
-      _transactionUiState.value = UiState.Loading
+      _transactionUiState.value = UiState(isLoading = true)
       val result = repo.getTransaction(token)
       Log.e("Transaction VM result:", "Detail: $result")
 
@@ -35,11 +35,11 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
         onSuccess = { list ->
           _transactions.value = list
           println("Transactions: $list")
-          _transactionUiState.value = UiState.Success(list)
+          _transactionUiState.value = UiState(success = true )
         },
         onFailure = { e ->
           Log.e("Transaction VM error", "Failed to load transaction", e)
-          _transactionUiState.value = UiState.Error(e.message ?: "Unknown error")
+          _transactionUiState.value = UiState(error = e.message ?: "Unknown error")
         }
       )
     }
@@ -47,7 +47,7 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
 
   fun setIdle(){
     viewModelScope.launch {
-      _transactionUiState.value = UiState.Idle
+      _transactionUiState.value = UiState()
     }
   }
 
@@ -58,11 +58,11 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
           if (response.isValid) {
             onVerified(response.receiverName)
           } else {
-            _transactionUiState.value = UiState.Error("Invalid account or insufficient balance")
+            _transactionUiState.value = UiState(error = "Invalid account or insufficient balance")
           }
         },
         onFailure = { e ->
-          _transactionUiState.value = UiState.Error(e.message ?: "Verification failed")
+          _transactionUiState.value = UiState(error = e.message ?: "Verification failed")
         }
       )
     }
@@ -74,16 +74,16 @@ class TransactionViewModel @Inject constructor (private val repo: TransactionRep
         onSuccess = { response ->
           when {
             response.fanta != null -> {
-              _transactionUiState.value = UiState.Success(response.fanta)
+              _transactionUiState.value = UiState(success = true)
             }
           
           response.sapor != null -> {
-          _transactionUiState.value = UiState.Error(response.sapor)
+          _transactionUiState.value = UiState(error = response.sapor)
         } else -> {
-          _transactionUiState.value = UiState.Error( "Unknown response from server")
+          _transactionUiState.value = UiState(error =  "Unknown response from server")
         } }},
         onFailure = { e ->
-          _transactionUiState.value = UiState.Error(e.message ?: "Confirmation failed")
+          _transactionUiState.value = UiState(error = e.message ?: "Confirmation failed")
         }
 
       )

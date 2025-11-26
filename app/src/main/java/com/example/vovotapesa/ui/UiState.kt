@@ -1,8 +1,8 @@
 package com.example.vovotapesa.ui
 
-sealed class UiState<out T> {
-    object Idle: UiState<Nothing>()
-    object Loading: UiState<Nothing>()
-    data class Success<T>(val data: T): UiState<T>()
-    data class Error(val sapor: String): UiState<Nothing>()
-}
+data class UiState<T>(
+    val isLoading: Boolean = false,
+    val success: Boolean = false,
+    val data: T? = null,
+    val error: String? =  null
+)

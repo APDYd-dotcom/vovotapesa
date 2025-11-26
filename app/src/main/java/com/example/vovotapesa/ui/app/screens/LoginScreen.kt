@@ -47,30 +47,34 @@ import com.example.vovotapesa.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen(
-    onLoginClick:()-> Unit,
-    onSignupClick:()-> Unit,
-    authViewModel: AuthViewModel
-){
+  onLoginClick: () -> Unit,
+  onSignupClick: () -> Unit,
+  authViewModel: AuthViewModel
+) {
   val loginUiState by authViewModel.loginUiState.collectAsState()
-  val ( email, setEmail) = rememberSaveable { mutableStateOf("") }
-  val ( password, setPassword) = rememberSaveable { mutableStateOf("") }
-  val navController = rememberNavController()
-  Scaffold { innerppading ->
+  val (email, setEmail) = rememberSaveable { mutableStateOf("") }
+  val (password, setPassword) = rememberSaveable { mutableStateOf("") }
+
+  Scaffold { innerPadding ->
     Column(
-      modifier = Modifier.fillMaxSize()
-        .padding(innerppading)
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(innerPadding)
         .verticalScroll(rememberScrollState())
         .padding(16.dp),
       horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Image(
-          painter = painterResource(id = R.drawable.logo),
-          contentDescription = "Logo",
-          modifier = Modifier.size(size = 180.dp)
-        )
+      // Logo
+      Image(
+        painter = painterResource(id = R.drawable.logo),
+        contentDescription = "Logo",
+        modifier = Modifier.size(180.dp)
+      )
 
       HeaderTextComponent(value = "Login")
-      Spacer(modifier = Modifier.height(height = 8.dp))
+      Spacer(modifier = Modifier.height(8.dp))
+
+      // Email field
       MyTextFieldComponent(
         value = email,
         onValueChange = setEmail,
@@ -78,7 +82,10 @@ fun LoginScreen(
         leadingIcon = Icons.Default.Email,
         modifier = Modifier.fillMaxWidth()
       )
-      Spacer(modifier = Modifier.height(height = 8.dp))
+
+      Spacer(modifier = Modifier.height(8.dp))
+
+      // Password field
       MyPasswordTextField(
         value = password,
         onValueChange = setPassword,
@@ -87,38 +94,50 @@ fun LoginScreen(
         labelText = "Password",
         enabled = true,
       )
-      Spacer(modifier = Modifier.height(height = 4.dp))
+
+      Spacer(modifier = Modifier.height(4.dp))
+
+      // Forget password
       Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
       ) {
-        TextButton(
-          onClick = {}
-        ) {
-          MediumTextComponent(value = "Forget password?", color = MaterialTheme.colorScheme.primary)
+        TextButton(onClick = {}) {
+          MediumTextComponent(
+            value = "Forget password?",
+            color = MaterialTheme.colorScheme.primary
+          )
         }
-      }
-      Spacer(modifier = Modifier.height(height = 4.dp))
-      Button(
-        modifier = Modifier.fillMaxWidth()
-          .height(height = 45.dp),
-        onClick = { authViewModel.login(AuthLogin(email,password)) }
-       // onClick = onLoginClick
-      ) {
-        MediumTextComponent(value = "Login", Color.White)
       }
 
-      //ui state
-      when (loginUiState) {
-        is UiState.Loading -> CircularProgressIndicator()
-        is UiState.Success<*> -> {
+      Spacer(modifier = Modifier.height(4.dp))
+
+      // Login button
+      Button(
+        modifier = Modifier
+          .fillMaxWidth()
+          .height(45.dp),
+        onClick = { authViewModel.login(AuthLogin(email, password)) }
+      ) {
+        MediumTextComponent(value = "Login", color = Color.White)
+      }
+
+      Spacer(modifier = Modifier.height(8.dp))
+
+      // ----------------- UI State -----------------
+      when {
+        loginUiState.isLoading -> CircularProgressIndicator()
+        loginUiState.success -> {
           LaunchedEffect(Unit) { onLoginClick() }
         }
-        is UiState.Error -> {
-          SelectionContainer { Text((loginUiState as UiState.Error).sapor, color = Color.Red) }
+        loginUiState.error != null -> {
+          SelectionContainer {
+            Text(text = loginUiState.error ?: "", color = Color.Red)
+          }
         }
-        else -> {}
       }
+
+      // Signup link at bottom
       Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom
@@ -128,14 +147,20 @@ fun LoginScreen(
           verticalAlignment = Alignment.CenterVertically,
           horizontalArrangement = Arrangement.Center
         ) {
-          NormalTextComponent(value = "Not yet registered?",color = MaterialTheme.colorScheme.onBackground,  modifier = Modifier)
-          TextButton(
-            onClick = onSignupClick
-          ) {
-            NormalTextComponent(value = "SignUp now.", color = MaterialTheme.colorScheme.primary,  modifier = Modifier)
+          NormalTextComponent(
+            value = "Not yet registered?",
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+          )
+          TextButton(onClick = onSignupClick) {
+            NormalTextComponent(
+              value = "SignUp now.",
+              color = MaterialTheme.colorScheme.primary,
+              modifier = Modifier
+            )
           }
         }
-        Spacer(modifier = Modifier.height(height = 32.dp))
+        Spacer(modifier = Modifier.height(32.dp))
       }
     }
   }

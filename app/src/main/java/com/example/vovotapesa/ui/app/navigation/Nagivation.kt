@@ -10,7 +10,7 @@ import com.example.vovotapesa.ui.app.pages.SendPage
 import com.example.vovotapesa.ui.app.pages.WalletPage
 import com.example.vovotapesa.ui.app.screens.HomeScreen
 import com.example.vovotapesa.ui.app.screens.LoginScreen
-import com.example.vovotapesa.ui.app.pages.ProfileScreen
+import com.example.vovotapesa.ui.app.pages.profile.ProfileScreen
 import com.example.vovotapesa.ui.app.screens.SignUpScreen
 import com.example.vovotapesa.viewmodel.AuthViewModel
 import com.example.vovotapesa.viewmodel.NotificationViewModel
@@ -23,13 +23,14 @@ sealed class Rooter{
   data class Login(val name: String="login"): Rooter()
   data class SignUp(val name: String="signUp"): Rooter()
   data class Home(val name: String="Home"): Rooter()
+  data class Profile(val name: String="profile"): Rooter()
 }
 
 sealed class PageRooter{
   data class Send(val name: String="send"): PageRooter()
   data class Wallet(val name: String="wallet"): PageRooter()
   data class Alerts(val name: String="alerts"): PageRooter()
-  data class Profile(val name: String="Profile"): Rooter()
+
 }
 
 @Composable
@@ -39,7 +40,7 @@ fun MyNavigation(
   walletViewModel: WalletViewModel = hiltViewModel(),
   profileViewModel: ProfileViewModel = hiltViewModel(),
   notificationViewModel: NotificationViewModel = hiltViewModel(),
-  transactionViewModel: TransactionViewModel = hiltViewModel()
+  transactionViewModel: TransactionViewModel = hiltViewModel(),
 ){
 
 
@@ -66,7 +67,15 @@ fun MyNavigation(
         walletViewModel = walletViewModel,
         profileViewModel = profileViewModel,
         notificationViewModel = notificationViewModel,
-        transactionViewModel = transactionViewModel
+        transactionViewModel = transactionViewModel,
+        onProfileClick = {navHostController.navigate(Rooter.Profile().name)}
+      )
+    }
+
+    composable(route = Rooter.Profile().name) {
+      ProfileScreen(
+        authViewModel = authViewModel,
+        profileViewModel = profileViewModel
       )
     }
   }
@@ -86,6 +95,14 @@ fun MyPageNavigation(
     navController = navHostController,
     startDestination = PageRooter.Wallet().name
   ){
+
+    composable(route = Rooter.Login().name) {
+      LoginScreen(
+        onLoginClick ={navHostController.navigate(Rooter.Home().name)},
+        onSignupClick = {navHostController.navigate(Rooter.SignUp().name)},
+        authViewModel = authViewModel
+      )
+    }
     composable(route= PageRooter.Wallet().name) {
       WalletPage(
         walletViewModel = walletViewModel,
@@ -106,15 +123,7 @@ fun MyPageNavigation(
         authViewModel = authViewModel
       )
     }
-    composable(route = PageRooter.Profile().name) {
-      ProfileScreen(
-        onLogoutClick = { navHostController.navigate(Rooter.Login().name) },
-        navController = navHostController,
-        authViewModel = authViewModel,
-        profileViewModel = profileViewModel
-      )
-    }
-  }
 
+  }
 
 }
